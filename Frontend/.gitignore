@@ -1,0 +1,5 @@
+electron/backend.cjs
+public/sqlite/
+electron/native/
+.next-desktop/
+serviceAccount.json

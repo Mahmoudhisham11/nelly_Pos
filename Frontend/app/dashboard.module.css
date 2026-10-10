@@ -1,0 +1,520 @@
+/* ==========================================================================
+   DASHBOARD CSS MODULE - MODERN BENTO & ACTIVITY FEED (iOS Inspired)
+   ========================================================================== */
+
+.loadingWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3.5px solid rgba(236, 72, 153, 0.2);
+  border-top-color: #db2777;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Toast */
+.toastWrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: #111827;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ==========================================================================
+   1. HERO BENTO BANNER (Clean Greeting & Live Shift Status)
+   ========================================================================== */
+
+.heroBanner {
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #fdf5f9 60%, #fcecf5 100%);
+  border: 1.5px solid #fbcfe8;
+  border-radius: 20px;
+  box-shadow: 0 4px 18px rgba(219, 39, 119, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.heroProfile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.heroAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+  flex-shrink: 0;
+}
+
+.heroGreeting {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #1e1322;
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 0.82rem;
+  color: #5a4663;
+  margin-top: 3px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.heroRoleTag {
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.heroDateBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid #f0e1ec;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #37243b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse 2s infinite;
+}
+
+/* ==========================================================================
+   2. BENTO KPI GRID (4 Main Balanced Metrics)
+   ========================================================================== */
+
+.bentoKPIGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 1024px) {
+  .bentoKPIGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .bentoKPIGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+}
+
+
+
+/* ==========================================================================
+   4. TWO-COLUMN CONTENT GRID (Recent Sales Feed & Low Stock / Expenses)
+   ========================================================================== */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Card Section Container */
+.feedPanel {
+  padding: 20px 22px;
+  background: #ffffff;
+  border: 1.5px solid #ebdbe6;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.feedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f6ecf3;
+}
+
+.feedTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedTitle {
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.feedCountBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
+}
+
+.viewAllLink {
+  color: #db2777;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.viewAllLink:hover {
+  color: #be185d;
+  transform: translateX(-2px);
+}
+
+/* Clean Activity List Items */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #fdfafc;
+  border: 1px solid #f3e6ee;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.activityItem:hover {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+  transform: translateX(-2px);
+}
+
+.activityLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activityIconBox {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #fbcfe8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #db2777;
+  flex-shrink: 0;
+}
+
+.activityInvNum {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e1322;
+}
+
+.activityMeta {
+  font-size: 0.74rem;
+  color: #725b7a;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.activityRight {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.activityAmount {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.activityStatusBadge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+/* ==========================================================================
+   5. LOW STOCK URGENT CHIPS & EXPENSES SNAPSHOT
+   ========================================================================== */
+
+.urgentStockPanel {
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1.5px solid #fed7aa;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.stockAlertList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.stockAlertItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+}
+
+.stockItemName {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #9a3412;
+}
+
+.stockItemQtyBadge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+/* Expenses Snapshot */
+.expensesSnapshotPanel {
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1.5px solid #ebdbe6;
+  border-radius: 20px;
+}
+
+.expenseBarList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expenseRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.expenseFillBg {
+  width: 100%;
+  height: 7px;
+  background: #f4ecf2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.expenseFillBar {
+  height: 100%;
+  background: linear-gradient(90deg, #ec4899, #db2777);
+  border-radius: 4px;
+}
+
+.emptyStateBox {
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   RESPONSIVE RULES (< 768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .heroBanner {
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .heroGreeting {
+    font-size: 1.05rem;
+  }
+
+  .heroDateBadge {
+    justify-content: space-between;
+    padding: 6px 12px;
+    font-size: 0.76rem;
+  }
+
+  .quickActionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .actionTile {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+
+  .tileIconBox {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .tileTitle {
+    font-size: 0.82rem;
+  }
+
+  .tileSub {
+    font-size: 0.68rem;
+  }
+
+  .feedPanel,
+  .urgentStockPanel,
+  .expensesSnapshotPanel {
+    padding: 14px 14px;
+    border-radius: 16px;
+  }
+
+  .feedTitle {
+    font-size: 0.92rem;
+  }
+
+  .activityItem {
+    padding: 10px 12px;
+  }
+
+  .activityIconBox {
+    width: 32px;
+    height: 32px;
+  }
+
+  .activityInvNum {
+    font-size: 0.78rem;
+  }
+
+  .activityMeta {
+    font-size: 0.7rem;
+  }
+
+  .activityAmount {
+    font-size: 0.86rem;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

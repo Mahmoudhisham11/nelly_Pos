@@ -1,0 +1,148 @@
+.modalContainer {
+  max-width: 760px !important;
+  padding: 0 !important;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(219, 39, 119, 0.1);
+  color: var(--rose-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-size: 1.1rem;
+}
+
+.headerSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.metaGrid {
+  margin-bottom: 1.25rem;
+}
+
+.totalValue {
+  font-size: 1.05rem;
+}
+
+.sectionHeading {
+  font-size: 0.875rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+}
+
+.tableWrapper {
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.table {
+  width: 100%;
+  font-size: 0.85rem;
+  text-align: right;
+  border-collapse: collapse;
+}
+
+.tableHead {
+  background: #fdf8fa;
+  border-bottom: 1.5px solid var(--border-card);
+}
+
+.thItem {
+  padding: 10px 12px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.thCenter {
+  padding: 10px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.thAction {
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.trItem {
+  border-bottom: 1px solid #f8eff4;
+}
+
+.tdName {
+  padding: 10px 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tdBarcode {
+  padding: 10px;
+  text-align: center;
+  font-family: var(--font-numbers);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.tdQty {
+  padding: 10px;
+  text-align: center;
+  font-weight: 800;
+  font-family: var(--font-numbers);
+}
+
+.tdPrice {
+  padding: 10px;
+  text-align: center;
+  font-family: var(--font-numbers);
+}
+
+.tdTotal {
+  padding: 10px;
+  text-align: center;
+  font-weight: 900;
+  font-family: var(--font-numbers);
+  color: var(--rose-600);
+}
+
+.tdAction {
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.footerWrapper {
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

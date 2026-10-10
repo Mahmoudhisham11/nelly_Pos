@@ -1,0 +1,71 @@
+.modalContainer {
+  max-width: 440px !important;
+  padding: 0 !important;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(219, 39, 119, 0.1);
+  color: var(--rose-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-size: 1.05rem;
+}
+
+.headerSubtitle {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.fieldGroup {
+  margin-bottom: 14px;
+}
+
+.fieldGroupLast {
+  margin-bottom: 10px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 0.825rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.requiredStar {
+  color: #dc2626;
+}
+
+.phoneInput {
+  text-align: right !important;
+}
+
+.submitBtn {
+  padding: 9px 20px !important;
+}

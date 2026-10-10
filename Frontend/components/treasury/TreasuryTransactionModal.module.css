@@ -1,0 +1,208 @@
+.modalContainer {
+  max-width: 540px;
+  width: 95%;
+  background: var(--card-bg, #ffffff);
+  border-radius: 18px;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  background: var(--bg-card-subtle, rgba(244, 63, 94, 0.03));
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.headerIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.typeIcon_إيداع {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.typeIcon_سحب {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.typeIcon_تحويل {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+
+.headerTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  margin: 0;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+  margin-top: 0.2rem;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #1e293b);
+}
+
+.typeTabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 1rem 1.5rem 0.25rem;
+}
+
+.typeTabBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-surface, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.typeTabBtn:hover {
+  background: var(--bg-hover, #f1f5f9);
+}
+
+.typeTabActive {
+  background: linear-gradient(135deg, var(--rose-600, #e11d48) 0%, var(--rose-700, #be123c) 100%) !important;
+  color: #ffffff !important;
+  border-color: var(--rose-600, #e11d48) !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+}
+
+.formContent {
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.errorAlert {
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.amountInput {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  padding-left: 2.75rem !important;
+  color: var(--rose-600, #e11d48) !important;
+}
+
+.dollarIcon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.requiredStar {
+  color: #e11d48;
+}
+
+.previewBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(244, 63, 94, 0.06);
+  border: 1px dashed rgba(244, 63, 94, 0.3);
+  border-radius: 10px;
+}
+
+.previewLabel {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #475569);
+  font-weight: 600;
+}
+
+.previewValue {
+  font-size: 1.15rem;
+  color: var(--rose-600, #e11d48);
+  font-weight: 800;
+}
+
+.gridRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .gridRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+}
+
+.cancelBtn {
+  padding: 0.65rem 1.25rem;
+}
+
+.submitBtn {
+  padding: 0.65rem 1.5rem;
+}

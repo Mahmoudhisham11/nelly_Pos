@@ -1,0 +1,286 @@
+.modalContainer {
+  max-width: 600px !important;
+  max-height: min(92vh, 780px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1e1322;
+  margin: 0;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin: 0;
+  margin-top: 2px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modalBody {
+  padding: 20px 24px !important;
+  overflow-y: auto !important;
+}
+
+.submitError {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.gridRow1 {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.gridRow2 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.gridRow3Full {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.gridRow3Two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.formGroupNoMargin {
+  margin-bottom: 0 !important;
+}
+
+.barcodeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.noMargin {
+  margin-bottom: 0 !important;
+}
+
+.requiredRose {
+  color: #db2777;
+}
+
+.requiredGreen {
+  color: #16a34a;
+}
+
+.generateBarcodeBtn {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 6px;
+  color: #db2777;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  transition: all 0.15s ease;
+}
+
+.generateBarcodeBtn:hover {
+  background: #fce7f3;
+}
+
+.barcodeInput {
+  font-weight: bold !important;
+}
+
+.fieldError {
+  color: #dc2626;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: block;
+  margin-top: 4px;
+}
+
+.inputWithCurrency {
+  position: relative;
+}
+
+.priceInput {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  padding-left: 40px !important;
+}
+
+.sellingPriceInput {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  padding-left: 40px !important;
+  border-color: #86efac !important;
+}
+
+.currencyTag {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9d174d;
+  font-size: 0.8rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.currencyTagGreen {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #16a34a;
+  font-size: 0.8rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.thresholdGroup {
+  margin-bottom: 14px;
+}
+
+.valuationBanner {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fef3f9 100%);
+  border: 1.5px dashed #fbcfe8;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 4px;
+}
+
+.valuationTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.valuationTopWithMargin {
+  margin-bottom: 8px;
+}
+
+.valuationLabelWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.valuationLabel {
+  font-size: 0.88rem;
+  color: #1e1322;
+  font-weight: 800;
+}
+
+.valuationValueWrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.valuationValue {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #9d174d;
+}
+
+.valuationCurrency {
+  font-size: 0.82rem;
+  color: #9d174d;
+  font-weight: 800;
+}
+
+.valuationProfitRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px dashed #fbcfe8;
+  font-size: 0.84rem;
+}
+
+.profitText {
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.profitGreen {
+  color: #16a34a;
+}
+
+.profitRed {
+  color: #dc2626;
+}
+
+.marginBadgePositive {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+  border: 1px solid #a7f3d0;
+}
+
+.marginBadgeNegative {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+  border: 1px solid #fecaca;
+}
+
+.modalFooter {
+  padding: 14px 24px !important;
+}
+
+.submitBtn {
+  min-width: 140px !important;
+}

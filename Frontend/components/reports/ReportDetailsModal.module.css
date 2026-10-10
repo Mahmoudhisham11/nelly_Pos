@@ -1,0 +1,655 @@
+.modalContainer {
+  max-width: 960px !important;
+  width: 95% !important;
+  border-radius: 20px !important;
+  border: 1.5px solid #f3e8ff !important;
+  box-shadow: 0 25px 60px -15px rgba(126, 34, 206, 0.25) !important;
+  background: #ffffff !important;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  color: #7e22ce;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #1e1322;
+  margin: 0;
+}
+
+.cashierBadge {
+  font-size: 0.78rem !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: #fdf2f8 !important;
+  color: #db2777 !important;
+  border: 1px solid #fbcfe8 !important;
+  font-weight: 800 !important;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.printBtn {
+  padding: 8px 16px !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+  background: #faf5ff !important;
+  border: 1.5px solid #e9d5ff !important;
+  color: #7e22ce !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.printBtn:hover {
+  background: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  transform: translateY(-1px);
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 130px);
+}
+
+/* KPI Cards in Modal */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.kpiCardSales {
+  background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+  border: 1.5px solid #fbcfe8;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.05);
+}
+
+.kpiLabelSales {
+  font-size: 0.8rem;
+  color: #9d174d;
+  font-weight: 800;
+}
+
+.kpiValueSales {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #db2777;
+  margin-top: 4px;
+}
+
+.kpiCardProfit {
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.05);
+}
+
+.kpiLabelProfit {
+  font-size: 0.8rem;
+  color: #065f46;
+  font-weight: 800;
+}
+
+.kpiValueProfit {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #059669;
+  margin-top: 4px;
+}
+
+.kpiCardCash {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+  border: 1.5px solid #fde68a;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.05);
+}
+
+.kpiLabelCash {
+  font-size: 0.8rem;
+  color: #92400e;
+  font-weight: 800;
+}
+
+.kpiValueCash {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #d97706;
+  margin-top: 4px;
+}
+
+.kpiCardInvoices {
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+  border: 1.5px solid #e9d5ff;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.05);
+}
+
+.kpiLabelInvoices {
+  font-size: 0.8rem;
+  color: #6b21a8;
+  font-weight: 800;
+}
+
+.kpiValueInvoices {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #9333ea;
+  margin-top: 4px;
+}
+
+.notesBanner {
+  background: #faf5ff;
+  border: 1.5px dashed #d8b4fe;
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  font-size: 0.86rem;
+  color: #6b21a8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modal Tabs Navigation */
+.tabsNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #f3e8ff;
+  padding-bottom: 10px;
+}
+
+.tabBtn {
+  padding: 9px 18px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  background: #fdf2f8;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.tabBtnActive {
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;
+  color: #ffffff !important;
+  border-color: #7e22ce !important;
+  box-shadow: 0 4px 14px rgba(126, 34, 206, 0.25);
+}
+
+/* Invoices Accordion List */
+.invoicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.invoiceCard {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.invoiceCard:hover {
+  border-color: #d8b4fe;
+  box-shadow: 0 4px 16px rgba(147, 51, 234, 0.08);
+}
+
+.invoiceCardExpanded {
+  border: 1.5px solid #a855f7;
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.12);
+}
+
+.invoiceSummaryBar {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.invoiceSummaryBarActive {
+  background: #faf5ff;
+  border-bottom: 1.5px solid #f3e8ff;
+}
+
+.invLeftGroup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.invIndexBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #f3e8ff;
+  color: #7e22ce;
+  font-size: 0.86rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9d5ff;
+}
+
+.invNumberGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.invNumber {
+  font-weight: 900;
+  color: #db2777;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+}
+
+.invPaymentMethod {
+  font-size: 0.74rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 800;
+  border: 1px solid #a7f3d0;
+}
+
+.invCustomer {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.invRightGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.invItemsCount {
+  font-size: 0.8rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.invTotal {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.invChevron {
+  color: #9333ea;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f3e8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.expandedContainer {
+  padding: 16px 20px;
+  background: #faf8fb;
+}
+
+/* Premium Tables within Modal */
+.modalTableWrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1.5px solid #ebdbe6;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+.customTableSmall {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  text-align: right;
+  table-layout: auto;
+}
+
+.customTableSmall thead tr {
+  background: #fdf4f9;
+  border-bottom: 1.5px solid #ebdbe6;
+}
+
+.customTableSmall th {
+  padding: 10px 14px;
+  font-weight: 800;
+  color: #4b5563;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+.customTableSmall td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f5edf3;
+  color: #1e1322;
+  font-weight: 600;
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+.customTableSmall tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.customTableSmall tbody tr:hover {
+  background: #fdf8fb;
+}
+
+.thRight {
+  text-align: right !important;
+}
+
+.thCenter {
+  text-align: center !important;
+}
+
+.thLeft {
+  text-align: left !important;
+}
+
+.tdName {
+  font-weight: 800;
+  color: #1e1322;
+  text-align: right;
+}
+
+.tdBarcode {
+  text-align: center;
+}
+
+.barcodeBadge {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background: #f3e8ff;
+  color: #7e22ce;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #e9d5ff;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.qtyBadge {
+  display: inline-block;
+  font-weight: 800;
+  background: #f3f4f6;
+  color: #374151;
+  padding: 2px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.tdPrice {
+  text-align: left;
+  font-weight: 700;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.tdSubtotal {
+  text-align: left;
+  font-weight: 900;
+  color: #db2777;
+  white-space: nowrap;
+}
+
+.tdProfit {
+  text-align: left;
+  font-weight: 900;
+  color: #059669;
+  white-space: nowrap;
+}
+
+/* Consolidated Table in Tab 2 */
+.consolidatedTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: right;
+  table-layout: auto;
+}
+
+.consolidatedTable thead tr {
+  background: #faf5ff;
+  border-bottom: 2px solid #e9d5ff;
+}
+
+.consolidatedTable th {
+  padding: 12px 16px;
+  font-weight: 800;
+  color: #581c87;
+  font-size: 0.84rem;
+  white-space: nowrap;
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+.consolidatedTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3e8ff;
+  font-weight: 600;
+  color: #1e1322;
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+.consolidatedTable tbody tr:hover {
+  background: #fdfaff;
+}
+
+.consolidatedName {
+  font-weight: 800;
+  color: #1e1322;
+  font-size: 0.92rem;
+  text-align: right;
+}
+
+.consolidatedSales {
+  font-weight: 900;
+  color: #db2777;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.consolidatedProfit {
+  font-weight: 900;
+  color: #059669;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Payments Breakdown Cards */
+.paymentsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.paymentCardCash {
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.05);
+}
+
+.paymentHeadCash {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #065f46;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.paymentValCash {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #059669;
+  margin-top: 12px;
+}
+
+.paymentCardVisa {
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+  border: 1.5px solid #e9d5ff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.05);
+}
+
+.paymentHeadVisa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b21a8;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.paymentValVisa {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #9333ea;
+  margin-top: 12px;
+}
+
+.paymentCardTransfer {
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+  border: 1.5px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.05);
+}
+
+.paymentHeadTransfer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e40af;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.paymentValTransfer {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #2563eb;
+  margin-top: 12px;
+}
+
+.paymentCardCredit {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+  border: 1.5px solid #fde68a;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.05);
+}
+
+.paymentHeadCredit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #92400e;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.paymentValCredit {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #d97706;
+  margin-top: 12px;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1.5px solid #f0e1ec;
+}

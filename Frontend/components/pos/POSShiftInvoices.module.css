@@ -1,0 +1,233 @@
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(219, 39, 119, 0.1);
+  color: var(--rose-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 2px 0 0 0;
+}
+
+.toolbarContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-card);
+  border-radius: 14px 14px 0 0;
+  flex-wrap: wrap;
+}
+
+.compactSearchWrap {
+  position: relative;
+  flex: 1 1 240px;
+  max-width: 380px;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #db2777;
+  pointer-events: none;
+}
+
+.compactSearchInput {
+  width: 100%;
+  height: 38px;
+  padding: 0 36px 0 32px;
+  background: #fdf5f9;
+  border: 1.5px solid #fbcfe8;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #1e1322;
+  transition: all 0.2s ease;
+}
+
+.compactSearchInput:focus {
+  outline: none;
+  border-color: #db2777;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
+}
+
+.clearSearchBtn {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f3e8ff;
+  border: none;
+  color: #9333ea;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.filterDropdownWrapper {
+  position: relative;
+}
+
+.filterDropdownBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterDropdownBtn:hover {
+  border-color: #db2777;
+  color: #db2777;
+  background: #fdf2f8;
+}
+
+.filterDropdownBtnActive {
+  background: #fdf2f8;
+  border-color: #f472b6;
+  color: #db2777;
+}
+
+.filterBtnText {
+  white-space: nowrap;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #ebdbe6;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  min-width: 190px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.dropdownMenuHeader {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  padding: 6px 10px 4px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 4px;
+}
+
+.dropdownMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: right;
+}
+
+.dropdownMenuItem:hover {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.dropdownMenuItemActive {
+  background: #fce7f3;
+  color: #be185d;
+  font-weight: 800;
+}
+
+.loadingState {
+  padding: 4rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.emptyState {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.emptyStateIcon {
+  margin: 0 auto 12px auto;
+  opacity: 0.35;
+  color: var(--rose-400);
+}
+
+.emptyStateTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.emptyStateText {
+  font-size: 0.85rem;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.invoiceNumberCell {
+  color: var(--rose-600);
+}
+
+.timeCell {
+  font-size: 0.775rem;
+  color: var(--text-secondary);
+}
+
+.actionCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

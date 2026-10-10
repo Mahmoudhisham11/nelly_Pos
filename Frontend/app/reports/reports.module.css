@@ -1,0 +1,376 @@
+.loadingWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingText {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIconBox {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  color: #9333ea;
+  border: 1px solid #e9d5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(147, 51, 234, 0.12);
+}
+
+.headerMainTitle {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.shiftsCountBadge {
+  font-size: 0.85rem;
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #d8b4fe;
+}
+
+.headerSubtitle {
+  color: #5a4663;
+  font-size: 0.88rem;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.exportBtn {
+  background: #ffffff;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filterPanel {
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1.5px solid #ebdbe6;
+}
+
+.filterPanelContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.searchInput {
+  padding-right: 38px;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.clearSearchBtn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.datePickerWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.datePickerLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #5a4663;
+}
+
+.dateInput {
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  width: auto;
+  font-weight: 700;
+}
+
+.clearDateBtn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quickFiltersGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quickFilterBtn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quickFilterActive {
+  border: 1.5px solid #9333ea;
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.quickFilterInactive {
+  border: 1px solid #e7d8e2;
+  background: #ffffff;
+  color: #5a4663;
+}
+
+.tableSection {
+  margin-bottom: 30px;
+}
+
+.emptyPlaceholder {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  margin: 0 auto 12px;
+  opacity: 0.7;
+}
+
+.emptyTitle {
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+  color: #1e1322;
+  font-weight: 800;
+}
+
+.emptySubtitle {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.thNowrap {
+  white-space: nowrap;
+}
+
+.thCenter {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.tableRowClickable {
+  cursor: pointer;
+}
+
+.reportNumberTag {
+  font-family: monospace;
+  font-weight: 800;
+  color: #7e22ce;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.closedDateText {
+  font-weight: 700;
+  color: #1e1322;
+  font-size: 0.88rem;
+}
+
+.closedTimeText {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.closedByText {
+  font-weight: 700;
+  color: #1e1322;
+}
+
+.invoicesCountBadge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #1e1322;
+  background: #fdf5f9;
+  border: 1px solid #ebdbe6;
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.totalSalesVal {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.totalProfitVal {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #059669;
+}
+
+.breakdownContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.78rem;
+}
+
+.cashPill {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.visaPill {
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  color: #7e22ce;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.transferPill {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.duePill {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.notesCol {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actionsColWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.deleteReportBtn {
+  padding: 6px 8px;
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .headerMainTitle {
+    font-size: 1.15rem;
+  }
+
+  .headerSubtitle {
+    font-size: 0.76rem;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .exportBtn {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+  }
+
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .filterPanel {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+
+  .searchWrap {
+    max-width: 100%;
+  }
+}
+

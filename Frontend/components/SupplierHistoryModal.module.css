@@ -1,0 +1,311 @@
+.modalContainer {
+  max-width: 680px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  padding: 26px !important;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0e1ec;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #db2777;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.balanceRibbon {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 1.5px;
+  border-style: solid;
+}
+
+.balanceRibbonPositive {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.balanceRibbonNegative {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.balanceRibbonZero {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.ribbonLabel {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #4a3650;
+}
+
+.ribbonValue {
+  font-size: 1.15rem;
+}
+
+.ribbonValuePositive {
+  color: #be185d;
+}
+
+.ribbonValueNegative {
+  color: #7e22ce;
+}
+
+.ribbonValueZero {
+  color: #047857;
+}
+
+.ribbonHint {
+  font-size: 0.8rem;
+  margin-right: 6px;
+  font-weight: 800;
+}
+
+.confirmBox {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  animation: fadeIn 0.2s ease;
+}
+
+.confirmTextWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #991b1b;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.confirmBtnGroup {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.confirmCancelBtn {
+  padding: 5px 12px !important;
+  font-size: 0.78rem !important;
+}
+
+.confirmDeleteBtn {
+  padding: 5px 14px !important;
+  font-size: 0.78rem !important;
+}
+
+.listScrollWrap {
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.emptyMsg {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.txList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.txCard {
+  background: #ffffff;
+  border: 1px solid #f0e1ec;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.txInfoGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.txIconBox {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.typePayable {
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+}
+
+.typeReceivable {
+  background: #faf5ff !important;
+  color: #7e22ce !important;
+}
+
+.typeCharge {
+  background: #fdf2f8 !important;
+  color: #db2777 !important;
+}
+
+.typeEdit {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+}
+
+.amountPayable {
+  color: #059669 !important;
+}
+
+.amountReceivable {
+  color: #7e22ce !important;
+}
+
+.amountCharge {
+  color: #db2777 !important;
+}
+
+.amountEdit {
+  color: #2563eb !important;
+}
+
+.txTitle {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #1e1322;
+}
+
+.txMethodTag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.txMeta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.txRightSide {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.txAmountBox {
+  text-align: left;
+}
+
+.txAmount {
+  font-weight: 900;
+  font-size: 1rem;
+}
+
+.txNewBal {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.txBalHint {
+  font-size: 0.68rem;
+  margin-right: 3px;
+}
+
+.deleteTxBtn {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteTxBtn:hover {
+  background: #fee2e2;
+  transform: scale(1.05);
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #f0e1ec;
+}
+
+.closeFooterBtn {
+  padding: 8px 22px !important;
+}

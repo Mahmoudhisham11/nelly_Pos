@@ -1,0 +1,574 @@
+/* Customers Page CSS Module */
+.toastWrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: #111827;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.headerTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.headerTitle {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.headerSubtitle {
+  color: #5a4663;
+  font-size: 0.88rem;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.addCustomerBtn {
+  padding: 10px 20px;
+}
+
+/* KPI Cards */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cardPink {
+  padding: 20px;
+  border-right: 4px solid #db2777;
+}
+
+.cardRed {
+  padding: 20px;
+  border-right: 4px solid #dc2626;
+}
+
+.cardGreen {
+  padding: 20px;
+  border-right: 4px solid #059669;
+}
+
+.cardLabel {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.cardValueMain {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #1e1322;
+  margin-top: 4px;
+}
+
+.cardValueDebt {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #dc2626;
+}
+
+.cardValueGreen {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #059669;
+}
+
+.cardUnitRed {
+  font-size: 0.85rem;
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.cardUnitGreen {
+  font-size: 0.85rem;
+  color: #059669;
+  font-weight: 800;
+}
+
+.valWithUnitRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* Filter Panel */
+.filterPanel {
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.filterInner {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.searchWrap {
+  position: relative;
+  min-width: 260px;
+  flex: 1;
+}
+
+.searchInput {
+  padding-right: 38px;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.filterBtnGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.filterBtn {
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+/* Table Section */
+.tablePanel {
+  padding: 20px;
+}
+
+.loadingOrEmptyBox {
+  text-align: center;
+  padding: 50px;
+}
+
+.emptyIcon {
+  margin: 0 auto 10px;
+  opacity: 0.4;
+}
+
+.emptyTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e1322;
+}
+
+.emptyDesc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.thCenter {
+  text-align: center;
+}
+
+.customerAvatarWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customerAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #fdf2f8;
+  color: #db2777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.95rem;
+  border: 1px solid #fbcfe8;
+}
+
+.customerNameText {
+  font-weight: 800;
+  color: #1e1322;
+  font-size: 0.92rem;
+}
+
+.phoneText {
+  color: #4a3650;
+  font-weight: 600;
+}
+
+.emptyDash {
+  color: #9ca3af;
+}
+
+.addressText {
+  color: #5a4663;
+  font-size: 0.85rem;
+}
+
+.badgeVip {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.badgeRegular {
+  background: #faf5ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.debtValBox {
+  color: #dc2626;
+  font-weight: 900;
+  font-size: 0.95rem;
+}
+
+.debtSubLabel {
+  font-size: 0.72rem;
+  display: block;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.creditValBox {
+  color: #059669;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.creditSubLabel {
+  font-size: 0.72rem;
+  display: block;
+  color: #059669;
+}
+
+.clearedText {
+  color: #059669;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.actionBtnSmall {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+.rowActionsGroup {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.iconBtnSmall {
+  padding: 6px 8px;
+}
+
+/* Modals */
+.modalCardAddEdit {
+  max-width: 460px;
+  padding: 26px;
+  background: #ffffff;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #fce7f3;
+  padding-bottom: 12px;
+}
+
+.modalTitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1e1322;
+}
+
+.modalCloseBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.requiredStar {
+  color: #db2777;
+}
+
+.formGridTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.formFooterActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* Payment Modal */
+.modalCardPayment {
+  max-width: 440px;
+  padding: 26px;
+  background: #ffffff;
+}
+
+.paymentModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #fce7f3;
+  padding-bottom: 12px;
+}
+
+.paymentModalSubTitle {
+  font-size: 0.8rem;
+  color: #db2777;
+  font-weight: 700;
+}
+
+.paymentDebtBanner {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.paymentDebtLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5a4663;
+}
+
+.paymentDebtVal {
+  font-size: 1.15rem;
+  color: #dc2626;
+}
+
+.paymentAmountInput {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Statement Modal */
+.modalCardStatement {
+  max-width: 560px;
+  padding: 26px;
+  background: #ffffff;
+}
+
+.statementHeaderStats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.statItemLabel {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.statementDebtVal {
+  font-size: 1.1rem;
+  color: #dc2626;
+}
+
+.statementGreenVal {
+  font-size: 1.1rem;
+  color: #059669;
+}
+
+.statementPurchasesVal {
+  font-size: 1.1rem;
+  color: #1e1322;
+}
+
+.transactionsHistoryBox {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.transactionsEmptyText {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+  font-size: 0.85rem;
+}
+
+.transactionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.txItemPayment {
+  padding: 8px 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.txItemCharge {
+  padding: 8px 10px;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.txTypeTitle {
+  font-weight: 800;
+  color: #1e1322;
+}
+
+.txNotesText {
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.txDateText {
+  font-size: 0.68rem;
+  color: #9ca3af;
+}
+
+.txLeftCol {
+  text-align: left;
+}
+
+.txAmountGreen {
+  font-weight: 900;
+  color: #059669;
+  font-size: 0.95rem;
+}
+
+.txAmountRed {
+  font-weight: 900;
+  color: #dc2626;
+  font-size: 0.95rem;
+}
+
+.txBalanceSub {
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+/* Delete Modal */
+.modalCardDelete {
+  max-width: 420px;
+  padding: 26px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.deleteIconBox {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #dc2626;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.deleteModalTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e1322;
+  margin-bottom: 8px;
+}
+
+.deleteModalDesc {
+  font-size: 0.88rem;
+  color: #5a4663;
+  margin-bottom: 20px;
+}
+
+.deleteModalBtn {
+  padding: 8px 18px;
+}
+
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .headerTitle {
+    font-size: 1.15rem;
+  }
+
+  .addCustomerBtn {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+  }
+
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .cardValueMain, .cardValueDebt {
+    font-size: 1.3rem;
+  }
+}
+

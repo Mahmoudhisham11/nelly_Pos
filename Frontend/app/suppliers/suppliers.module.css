@@ -1,0 +1,371 @@
+.loadingWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingText {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.toastWrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: #111827;
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIconBox {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.25);
+}
+
+.headerMainTitle {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.headerSubtitle {
+  color: #5a4663;
+  font-size: 0.88rem;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.addBtn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+}
+
+.filterPanel {
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1.5px solid #ebdbe6;
+}
+
+.filterPanelContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  max-width: 420px;
+}
+
+.searchInput {
+  padding-right: 40px;
+  font-weight: 600;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.filterActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.selectWrap {
+  min-width: 220px;
+}
+
+.resetFilterBtn {
+  padding: 10px 14px;
+}
+
+.emptyPlaceholder {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  margin: 0 auto 12px;
+  opacity: 0.8;
+}
+
+.emptyTitle {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: #1e1322;
+  font-weight: 800;
+}
+
+.emptySubtitle {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.thCenter {
+  text-align: center;
+}
+
+.nameColWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.supplierIconBadge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.badgePayableBg {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.badgeReceivableBg {
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.badgeZeroBg {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.supplierNameText {
+  font-weight: 800;
+  color: #1e1322;
+  font-size: 0.95rem;
+}
+
+.phoneLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #db2777;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.emptyDash {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.balanceVal {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.balancePayable {
+  color: #be185d;
+}
+
+.balanceReceivable {
+  color: #7e22ce;
+}
+
+.balanceZero {
+  color: #047857;
+}
+
+.adminLockTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-weight: 700;
+}
+
+.badgePayable {
+  background: #fdf2f8;
+  color: #be185d;
+  border: 1px solid #fbcfe8;
+}
+
+.badgeReceivable {
+  background: #faf5ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.notesText {
+  font-size: 0.84rem;
+  color: #5a4663;
+  font-weight: 600;
+}
+
+.quickPayBtn {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.actionsGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.historyBtn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
+.editBtn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
+.deleteBtn {
+  padding: 6px 8px;
+}
+
+.deleteModalContainer {
+  max-width: 440px;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  padding: 26px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.deleteIconBox {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #dc2626;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.deleteModalTitle {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #1e1322;
+  font-weight: 800;
+}
+
+.deleteModalText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.deleteTargetName {
+  color: #1e1322;
+}
+
+.deleteActionsRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirmDeleteBtn {
+  padding: 10px 20px;
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .headerMainTitle {
+    font-size: 1.15rem;
+  }
+
+  .headerSubtitle {
+    font-size: 0.76rem;
+  }
+
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+  }
+
+  .filterPanel {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+
+  .searchWrap {
+    max-width: 100%;
+  }
+
+  .suppliersGrid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+}
+

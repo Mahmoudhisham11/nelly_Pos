@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Free period a self-signed-up shop may give itself (keep in sync with TRIAL_DAYS in Frontend/lib/cloudAccount.js).
+    function trialDays() { return 30; }
+
+    function signedIn() { return request.auth != null; }
+    function myEmail() { return request.auth.token.email.lower(); }
+    function linkPath(uid) { return /databases/$(database)/documents/userShops/$(uid); }
+    function myLink() { return get(linkPath(request.auth.uid)).data; }
+    // Membership: an ACTIVE account of that shop.
+    function isMember(shopId) {
+      return signedIn()
+        && exists(linkPath(request.auth.uid))
+        && myLink().shopId == shopId
+        && myLink().get('active', true) != false;
+    }
+    // Accounts provisioned before roles existed (no role field) are shop owners.
+    function isShopAdmin(shopId) { return isMember(shopId) && myLink().get('role', 'admin') == 'admin'; }
+    // Subscription is shops/{id}.activeUntil (Firestore Timestamp): renewed by Devora (Admin SDK).
+    function active(shopId) {
+      let shop = get(/databases/$(database)/documents/shops/$(shopId)).data;
+      return shop.activeUntil > request.time && shop.get('suspended', false) != true;
+    }
+    function invitePath(shopId) { return /databases/$(database)/documents/shops/$(shopId)/invites/$(myEmail()); }
+    function validRole(r) { return r in ['admin', 'manager', 'cashier']; }
+
+    // Which shop an account belongs to, its role and whether it is active.
+    match /userShops/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isShopAdmin(resource.data.shopId));
+      // An account joins exactly one shop, as itself, with its own e-mail:
+      //  - its own new shop (sign-up): shop-<uid>, as admin
+      //  - a shop that invited this e-mail, with the invited role
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.email == myEmail()
+        && request.resource.data.get('active', true) == true
+        && (
+          (request.resource.data.shopId == 'shop-' + uid && request.resource.data.role == 'admin')
+          || (exists(invitePath(request.resource.data.shopId))
+              && request.resource.data.role == get(invitePath(request.resource.data.shopId)).data.role)
+        );
+      // The shop's admin manages its other members (role, active, name, branch) but can never move them to another shop.
+      allow update: if request.auth.uid != uid
+        && isShopAdmin(resource.data.shopId)
+        && request.resource.data.shopId == resource.data.shopId
+        && request.resource.data.email == resource.data.email
+        && validRole(request.resource.data.role);
+      allow delete: if request.auth.uid != uid && isShopAdmin(resource.data.shopId);
+    }
+
+    match /shops/{shopId} {
+      allow read: if isMember(shopId);
+      // Sign-up: an account creates ITS OWN shop once, with at most the free trial.
+      allow create: if signedIn()
+        && shopId == 'shop-' + request.auth.uid
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.plan == 'free'
+        && request.resource.data.activeUntil is timestamp
+        && request.resource.data.activeUntil <= request.time + duration.value(trialDays(), 'd');
+      allow update, delete: if false;
+
+      // Invitations: written by the shop's admin; the invited e-mail may read its own.
+      match /invites/{email} {
+        allow read: if isShopAdmin(shopId) || (signedIn() && myEmail() == email);
+        allow create, update: if isShopAdmin(shopId) && validRole(request.resource.data.role);
+        allow delete: if isShopAdmin(shopId);
+      }
+
+      // A member always reads the shop's data; writes need an active subscription.
+      match /{collection}/{docId} {
+        allow read: if isMember(shopId) && collection != 'invites';
+        // aiUsage (the assistant's daily quota counters) is written by the server only.
+        allow create, update, delete: if isMember(shopId) && active(shopId) && !(collection in ['aiUsage', 'invites']);
+      }
+    }
+
+    // Legacy flat collections (nelly_*): closed to everyone. Migrate with scripts/migrate-to-shop.mjs.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

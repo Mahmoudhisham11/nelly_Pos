@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+data/
+*.db
+*.db-wal
+*.db-shm
+.env*
+test-data/
+Frontend/serviceAccount.json
+client-data/
+!.env.example
+!.env.local.example
+release/
+dist/
+*.log

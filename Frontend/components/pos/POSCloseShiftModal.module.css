@@ -1,0 +1,140 @@
+.modalContainer {
+  max-width: 560px !important;
+  padding: 0 !important;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1322, #3c143e);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(30, 19, 34, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.1rem;
+}
+
+.headerSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.summaryBox {
+  margin-bottom: 1rem;
+}
+
+.summaryTitle {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--rose-700);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.statItem {
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-card);
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.statValue {
+  font-weight: 900;
+  font-family: var(--font-numbers);
+  font-size: 1.1rem;
+}
+
+.salesValue {
+  color: var(--rose-600);
+}
+
+.profitValue {
+  color: var(--emerald-600);
+}
+
+.cashValue {
+  color: #6b21a8;
+}
+
+.emptyAlert {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.emptyAlertText {
+  font-size: 0.8rem;
+  color: #1e40af;
+  line-height: 1.5;
+}
+
+.warningAlert {
+  margin-bottom: 1rem;
+}
+
+.warningAlertText {
+  font-size: 0.775rem;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.notesFieldWrapper {
+  margin-bottom: 0.5rem;
+}
+
+.notesLabel {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.notesTextarea {
+  resize: none !important;
+}
+
+.disabledBtn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}

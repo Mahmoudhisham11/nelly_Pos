@@ -1,0 +1,201 @@
+.brandInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandLogo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 60%, #be185d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(219, 39, 119, 0.3);
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.brandTitle {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #1e1322;
+  letter-spacing: -0.01em;
+}
+
+.brandSubtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.roleWrapper {
+  padding: 0 18px;
+  margin-bottom: 16px;
+}
+
+.roleCard {
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.roleAdmin {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.roleUser {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.roleLabel {
+  font-size: 0.78rem;
+  color: #5a4663;
+  font-weight: 700;
+}
+
+.roleValueAdmin {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.roleValueUser {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #7e22ce;
+}
+
+.navSectionTitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 800;
+  padding: 0 18px 8px;
+}
+
+.linkContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.linkLabel {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.linkLabelActive {
+  font-size: 0.94rem;
+  font-weight: 800;
+}
+
+.linkMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navBadge {
+  font-size: 0.68rem;
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-weight: 900;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid #ebdbe6;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.userAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #db2777;
+}
+
+.userAvatarPlaceholder {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.avatarAdmin {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.avatarUser {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.userText {
+  min-width: 0;
+}
+
+.userName {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e1322;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logoutBtn {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}

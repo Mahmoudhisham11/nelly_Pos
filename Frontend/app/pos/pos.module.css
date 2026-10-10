@@ -1,0 +1,367 @@
+.topActionsWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.navToggleInvoicesBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.navToggleInvoicesBtnActive {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  color: #ffffff;
+  border: 1px solid #db2777;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.25);
+}
+
+.navToggleInvoicesBtnInactive {
+  background: #ffffff;
+  color: #db2777;
+  border: 1.5px solid #fbcfe8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.navToggleInvoicesBtnInactive:hover {
+  background: #fdf2f8;
+  border-color: #f472b6;
+}
+
+.navCloseShiftBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: #2d1832;
+  color: #ffffff;
+  border: 1px solid #4a2852;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.navCloseShiftBtn:hover {
+  background: #4a2852;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(45, 24, 50, 0.2);
+}
+
+.badgeCount {
+  background: #fdf2f8;
+  color: #db2777;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid #fbcfe8;
+}
+
+.navToggleInvoicesBtnActive .badgeCount {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  .btnLabel {
+    display: none;
+  }
+
+  .navToggleInvoicesBtn,
+  .navCloseShiftBtn {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    position: relative;
+    border-radius: 9px;
+  }
+
+  .badgeCount {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 0.62rem;
+    padding: 0 3px;
+    min-width: 15px;
+    line-height: 15px;
+    height: 15px;
+    border-radius: 999px;
+    text-align: center;
+  }
+}
+
+.scannerLabel {
+  font-size: 0.9rem;
+}
+
+.scannerInput {
+  height: 48px;
+  font-size: 0.95rem;
+}
+
+.outOfStockItem {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #fef2f2;
+}
+
+.outOfStockText {
+  color: #991b1b;
+}
+
+.outOfStockBadge {
+  font-size: 0.72rem;
+  color: #dc2626;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.outOfStockStock {
+  color: #dc2626;
+}
+
+.registerGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 4px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .registerGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+.cartColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.cartTitleText {
+  font-size: 1rem;
+}
+
+.heldInvoicesBtn {
+  gap: 6px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.cartItemsWrapper {
+  max-height: 360px;
+  min-height: 160px;
+}
+
+.cartEmptyPlaceholder {
+  height: 160px;
+}
+
+.cartEmptyIcon {
+  opacity: 0.35;
+}
+
+.cartEmptyTitle {
+  font-size: 0.95rem;
+}
+
+.cartSingleRow {
+  padding: 0.85rem 1rem;
+  align-items: center;
+}
+
+.itemHeaderGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.itemTitle {
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.stockPillLow {
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.stockPillNormal {
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.itemSubtext {
+  font-size: 0.82rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.itemPriceTotal {
+  color: var(--rose-700);
+  font-weight: 900;
+}
+
+.remainingShopStock {
+  color: #7c3aed;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.qtyBtn {
+  width: 30px;
+  height: 30px;
+}
+
+.qtyDisplay {
+  font-size: 1rem;
+  width: 26px;
+}
+
+.qtyDirectInput {
+  width: 44px;
+  height: 30px;
+  text-align: center;
+  font-family: var(--font-numbers);
+  font-weight: 900;
+  font-size: 1rem;
+  border: 1.5px solid var(--rose-200);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text-primary);
+  padding: 0 4px;
+  -moz-appearance: textfield;
+  transition: all 0.2s ease;
+}
+
+.qtyDirectInput::-webkit-outer-spin-button,
+.qtyDirectInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qtyDirectInput:focus {
+  outline: none;
+  border-color: var(--rose-500);
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.15);
+}
+
+.deleteItemBtn {
+  padding: 5px;
+  margin-left: 4px;
+}
+
+.selectInput {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.88rem;
+  width: 100%;
+}
+
+.paymentColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.discountInput {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.methodBtn {
+  padding: 0.65rem 0.4rem;
+  font-size: 0.82rem;
+}
+
+.receivedInput {
+  padding: 0.6rem 0.85rem;
+}
+
+.receivedFeedbackRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedbackLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.feedbackValue {
+  font-family: var(--font-numbers);
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.feedbackExactValue {
+  font-family: var(--font-numbers);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.netSummaryPanel {
+  padding: 1.1rem;
+}
+
+.subtotalVal {
+  font-size: 0.95rem;
+}
+
+.discountVal {
+  font-size: 0.95rem;
+}
+
+.grandTotalVal {
+  font-size: 1.45rem;
+}
+
+.submitSaleBtn {
+  padding: 1.1rem;
+  font-size: 1.05rem;
+}

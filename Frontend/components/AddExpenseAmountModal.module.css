@@ -1,0 +1,179 @@
+.modalContainer {
+  max-width: 480px !important;
+  padding: 26px !important;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0e1ec;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.headerSubtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.itemNameHighlight {
+  color: #1e1322;
+}
+
+.monthHighlight {
+  color: #db2777;
+}
+
+.closeBtn {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #db2777;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ribbon {
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.ribbonActive {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.ribbonZero {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.ribbonLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4a3650;
+}
+
+.ribbonValue {
+  font-size: 1.1rem;
+}
+
+.ribbonValueActive {
+  color: #be185d;
+}
+
+.ribbonValueZero {
+  color: #047857;
+}
+
+.requiredStar {
+  color: #db2777;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.amountInput {
+  padding-right: 40px !important;
+  text-align: right !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+}
+
+.dollarIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #059669;
+}
+
+.previewBox {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.previewLabel {
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.previewValue {
+  color: #be185d;
+  font-size: 1.05rem;
+}
+
+.gridRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dateError {
+  color: #dc2626;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 3px;
+  display: block;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.cancelBtn {
+  padding: 9px 18px !important;
+}
+
+.submitBtn {
+  padding: 9px 24px !important;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+}

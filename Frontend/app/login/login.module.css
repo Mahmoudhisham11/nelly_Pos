@@ -1,0 +1,227 @@
+.loginPageWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-main);
+}
+
+.ambientGlowTop {
+  position: absolute;
+  top: 6%;
+  left: 10%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.2) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.ambientGlowBottom {
+  position: absolute;
+  bottom: 6%;
+  right: 10%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.16) 0%, transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 480px;
+  padding: 36px 32px;
+  position: relative;
+  z-index: 10;
+  background-color: #ffffff;
+  box-shadow: 0 25px 60px rgba(219, 39, 119, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid #fbcfe8;
+  border-radius: 24px;
+}
+
+.brandHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.brandLogoBox {
+  width: 65px;
+  height: 65px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 60%, #be185d 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(219, 39, 119, 0.35);
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.brandTitle {
+  font-size: 1.65rem;
+  font-weight: 900;
+  margin-bottom: 4px;
+  color: #1e1322;
+}
+
+.brandSubtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.tabSelector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: #fdf2f8;
+  padding: 5px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #fce7f3;
+}
+
+.tabButton {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.tabActive {
+  background: #ffffff;
+  color: #db2777;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);
+}
+
+.tabInactive {
+  background: transparent;
+  color: #5a4663;
+  box-shadow: none;
+}
+
+.alertError {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.alertSuccess {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #047857;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #db2777;
+}
+
+.inputWithIcon {
+  padding-right: 40px;
+}
+
+.inputWithIconRtl {
+  padding-right: 40px;
+  text-align: right;
+}
+
+.requiredAsterisk {
+  color: #db2777;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.passwordToggleBtn {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9d8b9f;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.passwordToggleBtn:hover {
+  color: #db2777;
+}
+
+.rememberMeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -4px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #4a3852;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rememberMeCheckbox {
+  accent-color: #db2777;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.footerCopyright {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}

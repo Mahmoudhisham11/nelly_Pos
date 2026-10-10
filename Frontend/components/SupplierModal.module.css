@@ -1,0 +1,156 @@
+.modalContainer {
+  max-width: 520px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  padding: 26px !important;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0e1ec;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.headerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #db2777;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.requiredStar {
+  color: #db2777;
+}
+
+.optionalTag {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.phoneInput {
+  padding-right: 40px !important;
+  text-align: right !important;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #db2777;
+}
+
+.balanceBox {
+  background: #fcf8fa;
+  border: 1.5px solid #f0e1ec;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.balanceLabel {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.balanceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.typeBtn {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #4b5563;
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.typeBtnPayableActive {
+  border: 1.5px solid #db2777;
+  background: #fdf2f8;
+  color: #be185d;
+}
+
+.typeBtnReceivableActive {
+  border: 1.5px solid #7e22ce;
+  background: #faf5ff;
+  color: #7e22ce;
+}
+
+.typeBtnZeroActive {
+  border: 1.5px solid #059669;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.balanceAmountInput {
+  padding-right: 40px !important;
+  text-align: right !important;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+.cancelBtn {
+  padding: 10px 20px !important;
+}
+
+.submitBtn {
+  padding: 10px 24px !important;
+}

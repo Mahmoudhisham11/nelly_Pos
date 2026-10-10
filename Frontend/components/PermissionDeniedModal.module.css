@@ -1,0 +1,92 @@
+.modalCard {
+  max-width: 460px;
+  padding: 30px 26px;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 22px;
+  border: 1.5px solid #fecdd3;
+  box-shadow: 0 25px 60px rgba(225, 29, 72, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.iconWrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+  border: 2px solid #fda4af;
+  color: #e11d48;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(225, 29, 72, 0.18);
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #1e1322;
+  margin-bottom: 8px;
+}
+
+.message {
+  font-size: 0.94rem;
+  color: #5a4663;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.actionHighlight {
+  color: #be185d;
+}
+
+.adminHighlight {
+  color: #9d174d;
+}
+
+.roleBox {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #4a3650;
+}
+
+.roleLabel {
+  font-weight: 700;
+}
+
+.roleBadge {
+  background: #ffffff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dismissBtn {
+  padding: 10px 22px !important;
+  font-size: 0.92rem !important;
+  flex: 1;
+}
+
+.switchBtn {
+  padding: 10px 20px !important;
+  font-size: 0.92rem !important;
+  flex: 1.2;
+}

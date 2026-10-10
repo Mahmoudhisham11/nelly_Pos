@@ -1,0 +1,420 @@
+.modalContainer {
+  max-width: 680px !important;
+  max-height: min(92vh, 800px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0e1ec;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(219, 39, 119, 0.25);
+}
+
+.headerTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #1e1322;
+  margin: 0;
+}
+
+.headerSubtitle {
+  font-size: 0.82rem;
+  color: #5a4663;
+  margin: 2px 0 0 0;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printBtn {
+  padding: 8px 14px !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.closeBtn {
+  background: #fdf2f8;
+  border: none;
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  color: #db2777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.printableArea {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.payslipHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.brandName {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #db2777;
+  margin: 0;
+}
+
+.brandDesc {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin: 2px 0 0 0;
+  font-weight: 600;
+}
+
+.metaInfo {
+  text-align: left;
+  font-size: 0.82rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.metaLine {
+  margin: 0;
+}
+
+.metaPeriod {
+  margin: 2px 0 0 0;
+}
+
+.periodHighlight {
+  font-weight: 800;
+}
+
+.employeeInfoCard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+}
+
+.infoLabel {
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 700;
+  display: block;
+}
+
+.infoValueName {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.infoValueCode {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.infoValueGeneral {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.statBox {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statBoxTitle {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.statBoxValue {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #1e1322;
+}
+
+.statBoxValueRose {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.tableWrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.thead {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 800;
+}
+
+.thItem {
+  padding: 10px 14px;
+}
+
+.thCenter {
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.thLeft {
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.trBase {
+  border-bottom: 1px solid #e5e7eb;
+  background: #fdf8fb;
+}
+
+.tdMuted {
+  padding: 10px 14px;
+  color: #6b7280;
+}
+
+.tdMutedCenter {
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.tdMutedLeft {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.trEarned {
+  border-bottom: 1px solid #e5e7eb;
+  color: #059669;
+}
+
+.tdEarned {
+  padding: 10px 14px;
+}
+
+.titleBold {
+  font-weight: 800;
+}
+
+.subDetail {
+  display: block;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.tdCenterSub {
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.tdValueGreen {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 900;
+  color: #059669;
+}
+
+.trCommission {
+  border-bottom: 1px solid #e5e7eb;
+  color: #2563eb;
+}
+
+.trCommissionZero {
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.tdValueBlue {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 900;
+  color: #2563eb;
+}
+
+.trBonus {
+  border-bottom: 1px solid #e5e7eb;
+  color: #059669;
+}
+
+.trPenalty {
+  border-bottom: 1px solid #e5e7eb;
+  color: #dc2626;
+}
+
+.trAdvance {
+  border-bottom: 1px solid #e5e7eb;
+  color: #d97706;
+}
+
+.tdValueGeneric {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 900;
+}
+
+.netSalaryCard {
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  border: 2px solid #db2777;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.netSalaryTitle {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.netSalaryFormula {
+  margin: 2px 0 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.netSalaryAmount {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #db2777;
+}
+
+.txLogWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.txLogTitle {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #4b5563;
+  margin: 0;
+}
+
+.txLogList {
+  max-height: 140px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.txLogRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  font-size: 0.82rem;
+}
+
+.txLogLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.txLogDate {
+  color: #6b7280;
+}
+
+.txLogNote {
+  font-weight: 700;
+  color: #1e1322;
+}
+
+.txLogAmountPositive {
+  font-weight: 900;
+  color: #059669;
+}
+
+.txLogAmountNegative {
+  font-weight: 900;
+  color: #dc2626;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1px solid #f0e1ec;
+  background: #ffffff;
+  flex-shrink: 0;
+}
