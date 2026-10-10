@@ -8,6 +8,17 @@ contextBridge.exposeInMainWorld("nellyDesktop", {
   openShop: (arg) => ipcRenderer.invoke("nelly:open-shop", arg),
   shopForEmail: (email) => ipcRenderer.invoke("nelly:shop-for-email", email),
   configureCloud: (projectId) => ipcRenderer.invoke("nelly:configure-cloud", projectId),
+  // app updates (see electron/main.js)
+  updates: {
+    state: () => ipcRenderer.invoke("nelly:update-state"),
+    check: () => ipcRenderer.invoke("nelly:update-check"),
+    install: () => ipcRenderer.invoke("nelly:update-install"),
+    onChange: (cb) => {
+      const h = (_e, st) => cb(st);
+      ipcRenderer.on("nelly:update", h);
+      return () => ipcRenderer.removeListener("nelly:update", h);
+    },
+  },
   backups: {
     now: () => ipcRenderer.invoke("nelly:backup-now"),
     list: () => ipcRenderer.invoke("nelly:backup-list"),

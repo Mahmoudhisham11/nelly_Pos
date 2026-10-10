@@ -74,6 +74,12 @@ service cloud.firestore {
       }
     }
 
+    // App versions (minimum allowed version, release notes): readable by every installed app, written by Devora only.
+    match /appConfig/{app} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Legacy flat collections (nelly_*): closed to everyone. Migrate with scripts/migrate-to-shop.mjs.
     match /{document=**} {
       allow read, write: if false;

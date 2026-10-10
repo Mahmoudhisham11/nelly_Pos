@@ -4,6 +4,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import PwaRegister from "@/components/PwaRegister";
 import AiAssistant from "@/components/AiAssistant";
 import SubscriptionGate from "@/components/SubscriptionGate";
+import UpdateGate from "@/components/UpdateGate";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
           {children}
           <AiAssistant />
           <SubscriptionGate />
+          <UpdateGate />
         </AuthProvider>
       </body>
     </html>

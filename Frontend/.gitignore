@@ -3,3 +3,6 @@ public/sqlite/
 electron/native/
 .next-desktop/
 serviceAccount.json
+electron/main.bundle.cjs
+release/
+dist-app/

@@ -30,5 +30,9 @@ if (r.status !== 0 || !fs.existsSync(path.join(dest, "build", "Release", "better
   console.error("\nتعذر تنزيل ملف SQLite الخاص بـ Electron. تأكد من الاتصال بالإنترنت ثم أعد المحاولة.");
   process.exit(1);
 }
+// Load the addon by its fixed path instead of through the "bindings" package, so the installed app (which ships no
+// node_modules) needs nothing else. Inside the packed app the .node file is unpacked next to app.asar.
+const dbFile = path.join(dest, "lib", "database.js");
+fs.writeFileSync(dbFile, fs.readFileSync(dbFile, "utf8").replace("require('bindings')('better_sqlite3.node')", "require('../build/Release/better_sqlite3.node')"));
 fs.writeFileSync(marker, want);
 console.log("ready.");

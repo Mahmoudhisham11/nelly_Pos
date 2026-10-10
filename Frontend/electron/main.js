@@ -201,9 +201,45 @@ async function createWindow() {
   loadApp();
 }
 
+// ---- Updates (installed app only): checked at start and every 4 hours, downloaded in the background; the renderer
+// shows "update ready" (or locks the app when Devora marks this version as too old) and installs on the user's click.
+let updateState = { status: "idle" };
+let updater = null;
+function sendUpdate(patch) {
+  updateState = { ...updateState, ...patch };
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("nelly:update", updateState);
+}
+function setupUpdates() {
+  if (!app.isPackaged) return;
+  try {
+    ({ autoUpdater: updater } = require("electron-updater"));
+  } catch (e) {
+    console.error("[Update] unavailable:", e);
+    return;
+  }
+  updater.autoDownload = true;
+  updater.autoInstallOnAppQuit = true;
+  updater.on("checking-for-update", () => sendUpdate({ status: "checking" }));
+  updater.on("update-available", (i) => sendUpdate({ status: "downloading", version: i.version, percent: 0 }));
+  updater.on("update-not-available", () => sendUpdate({ status: "latest" }));
+  updater.on("download-progress", (p) => sendUpdate({ status: "downloading", percent: Math.round(p.percent || 0) }));
+  updater.on("update-downloaded", (i) => sendUpdate({ status: "ready", version: i.version }));
+  updater.on("error", (e) => sendUpdate({ status: "error", message: String(e?.message || e).slice(0, 200) }));
+  const check = () => updater.checkForUpdates().catch(() => {});
+  setTimeout(check, 5000);
+  setInterval(check, 4 * 3600 * 1000).unref();
+}
+ipcMain.handle("nelly:update-state", () => ({ ...updateState, current: app.getVersion(), packaged: app.isPackaged }));
+ipcMain.handle("nelly:update-check", () => (updater ? updater.checkForUpdates().then(() => true, () => false) : false));
+ipcMain.handle("nelly:update-install", () => {
+  if (updater && updateState.status === "ready") setImmediate(() => updater.quitAndInstall(false, true));
+  return updateState.status === "ready";
+});
+
 app.whenReady().then(() => {
   startBackend();
   createWindow();
+  setupUpdates();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

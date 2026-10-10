@@ -16,27 +16,88 @@
     "build:web": "node scripts/build-web.mjs build",
     "dev:web": "node scripts/build-web.mjs dev",
     "start:web": "node scripts/build-web.mjs start",
-    "prepare:electron": "node scripts/prepare-electron.mjs"
+    "prepare:electron": "node scripts/prepare-electron.mjs",
+    "build:electron-main": "node scripts/build-electron-main.mjs",
+    "dist": "npm run prepare:electron && npm run build:electron-backend && npm run build:electron-main && npm run build:desktop && node scripts/package-desktop.mjs",
+    "release": "npm run prepare:electron && npm run build:electron-backend && npm run build:electron-main && npm run build:desktop && node scripts/package-desktop.mjs --publish"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
     "@nelly/core": "*",
     "@sqlite.org/sqlite-wasm": "^3.53.4-build2",
     "canvas-confetti": "^1.9.4",
+    "electron-updater": "^6.8.9",
     "firebase": "^12.19.0",
+    "firebase-admin": "^14.5.0",
     "jsbarcode": "^3.12.3",
     "lucide-react": "^1.37.0",
     "next": "^16.4.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "firebase-admin": "^14.5.0"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",
     "cross-env": "^7.0.3",
     "electron": "^32.0.0",
+    "electron-builder": "^25.1.8",
     "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "^16.4.0"
+  },
+  "productName": "Nelly POS",
+  "author": "Devora",
+  "build": {
+    "appId": "com.devora.nelly",
+    "productName": "Nelly POS",
+    "copyright": "© Devora",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/main.bundle.cjs",
+      "electron/preload.js",
+      "electron/backend.cjs",
+      "electron/native/**/*",
+      "out/**/*",
+      "public/icon.ico",
+      "package.json",
+      "!**/node_modules/**"
+    ],
+    "extraMetadata": {
+      "main": "electron/main.bundle.cjs"
+    },
+    "asarUnpack": [
+      "electron/native/**"
+    ],
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nelly POS",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Mahmoudhisham11",
+        "repo": "nelly-pos-releases",
+        "releaseType": "release"
+      }
+    ],
+    "electronVersion": "32.3.3"
   }
 }
