@@ -291,7 +291,7 @@ export default function ShopPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `بضاعة_محل_نيللي_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `بضاعة_المحل_Nelly_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -755,7 +755,7 @@ export default function ShopPage() {
         onClose={() => setIsPrintModalOpen(false)}
         products={products}
         title="كشف جرد بضاعة المحل"
-        locationName="محل نيللي لمستحضرات التجميل"
+        locationName="محل Nelly"
       />
 
       {/* Barcode Print Modal */}
@@ -785,7 +785,7 @@ export default function ShopPage() {
 
             <h3 className={styles.deleteModalTitle}>تأكيد حذف الصنف من المحل</h3>
             <p className={styles.deleteModalText}>
-              هل أنت متأكد من حذف الصنف <strong className={styles.deleteTargetName}>"{productToDelete.name}"</strong> من سجل بضاعة المحل؟
+              هل أنت متأكد من حذف الصنف <strong className={styles.deleteTargetName}>&quot;{productToDelete.name}&quot;</strong> من سجل بضاعة المحل؟
             </p>
 
             <div className={styles.deleteActionsRow}>

@@ -95,13 +95,6 @@ function startBackend() {
   const { configure } = core();
   fs.mkdirSync(app.getPath("userData"), { recursive: true });
   configure({ SECRET_KEY: loadSecret(), FIREBASE_PROJECT_ID: firebaseProjectFromEnv() });
-  // First run of an install that was given the client's data copy: it becomes the starting (unclaimed) database.
-  const seed = process.env.NELLY_SEED_DB;
-  const legacyFile = path.join(LEGACY_DIR(), "nelly.db");
-  if (seed && fs.existsSync(seed) && !fs.existsSync(legacyFile) && !readRegistry().lastShop) {
-    fs.mkdirSync(LEGACY_DIR(), { recursive: true });
-    fs.copyFileSync(seed, legacyFile);
-  }
   const reg = readRegistry();
   const last = validShopId(reg.lastShop) && fs.existsSync(path.join(shopDir(reg.lastShop), "nelly.db")) ? shopDir(reg.lastShop) : LEGACY_DIR();
   openDb(last);
@@ -167,7 +160,7 @@ async function createWindow() {
     backgroundColor: "#0a0a0f",
     webPreferences: { preload: path.join(__dirname, "preload.js"), nodeIntegration: false, contextIsolation: true, sandbox: false },
     icon: path.join(__dirname, "../public/icon.ico"),
-    title: "مخزن Nelly",
+    title: "Nelly",
     show: false,
     autoHideMenuBar: !isDev,
   });

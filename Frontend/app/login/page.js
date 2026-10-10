@@ -156,7 +156,7 @@ export default function LoginPage() {
             N
           </div>
           <h1 className={styles.brandTitle}>
-            مخزن <span className="gradient-text-rose">Nelly</span> للميكاب
+            <span className="gradient-text-rose">Nelly</span>
           </h1>
           <p className={styles.brandSubtitle}>
             نظام إدارة وجرد المخزون وتحديد الصلاحيات
@@ -338,7 +338,7 @@ export default function LoginPage() {
 
         {/* Footer info */}
         <div className={styles.footerCopyright}>
-          جميع الحقوق محفوظة © متجر ومخزن Nelly للميكاب
+          جميع الحقوق محفوظة © Nelly
         </div>
       </div>
     </div>

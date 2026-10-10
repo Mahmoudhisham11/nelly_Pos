@@ -660,7 +660,7 @@ export default function SettingsPage() {
                 تأكيد حذف حساب المستخدم
               </h3>
               <p className={styles.deleteModalDesc}>
-                هل أنت متأكد من حذف الحساب <strong className={styles.deleteModalUserHighlight}>"{userToDelete.displayName || userToDelete.email}"</strong> من النظام؟
+                هل أنت متأكد من حذف الحساب <strong className={styles.deleteModalUserHighlight}>&quot;{userToDelete.displayName || userToDelete.email}&quot;</strong> من النظام؟
               </p>
 
               <div className={styles.deleteModalActions}>

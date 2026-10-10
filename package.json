@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "npm run dev -w Frontend",
     "build": "npm run build -w Frontend",
-    "test": "npm test -w Backend",
     "typecheck": "npm run typecheck -w Backend",
     "lint": "npm run lint -w Frontend",
     "desktop": "npm run desktop -w Frontend",

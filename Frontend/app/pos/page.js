@@ -569,7 +569,8 @@ export default function POSPage() {
         cashier: user ? {
           uid: user.uid,
           name: user.displayName || user.email || "الكاشير",
-          email: user.email
+          email: user.email,
+          branch: user.branch || ""
         } : null,
         notes: orderNotes
       };

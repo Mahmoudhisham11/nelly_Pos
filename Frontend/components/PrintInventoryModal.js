@@ -10,7 +10,7 @@ export default function PrintInventoryModal({
   onClose, 
   products = [],
   title = "كشف جرد الأصناف ومطابقة المخزون",
-  locationName = "مخزن نيللي لمستحضرات التجميل"
+  locationName = "مخزن Nelly"
 }) {
   const [includeValuation, setIncludeValuation] = useState(true);
   const [includeAuditColumn, setIncludeAuditColumn] = useState(true);
@@ -130,7 +130,7 @@ export default function PrintInventoryModal({
                 onChange={(e) => setIncludeAuditColumn(e.target.checked)} 
                 className={styles.pinkCheckbox}
               />
-              إضافة خانة "الجرد الفعلي بالقلم ✍️"
+              إضافة خانة &quot;الجرد الفعلي بالقلم ✍️&quot;
             </label>
           </div>
 

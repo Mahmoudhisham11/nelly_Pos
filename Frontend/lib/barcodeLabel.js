@@ -7,10 +7,6 @@ import JsBarcode from "jsbarcode";
 
 const MODULES_MM = [0.5, 0.375, 0.25, 0.19]; // 4, 3, 2 dots at 203 dpi; 0.19 ≈ 2 dots at 300 dpi for long codes
 
-export function cleanBarcode(raw) {
-  return String(raw ?? "").trim().replace(/[^\x20-\x7E]/g, "");
-}
-
 function isValidEan13(code) {
   if (!/^\d{13}$/.test(code)) return false;
   const d = code.split("").map(Number);

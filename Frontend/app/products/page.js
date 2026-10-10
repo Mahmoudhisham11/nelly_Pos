@@ -249,7 +249,7 @@ export default function ProductsPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `تقرير_مخزن_نيللي_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `تقرير_المخزن_Nelly_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -657,7 +657,7 @@ export default function ProductsPage() {
 
               <h3 className={styles.deleteModalTitle}>تأكيد حذف الصنف من المخزن</h3>
               <p className={styles.deleteModalDesc}>
-                هل أنت متأكد من حذف الصنف <strong className={styles.deleteModalHighlight}>"{productToDelete.name}"</strong> (باركود: {productToDelete.barcode})؟ لن تتمكن من التراجع عن هذا الإجراء.
+                هل أنت متأكد من حذف الصنف <strong className={styles.deleteModalHighlight}>&quot;{productToDelete.name}&quot;</strong> (باركود: {productToDelete.barcode})؟ لن تتمكن من التراجع عن هذا الإجراء.
               </p>
 
               <div className={styles.deleteModalActions}>

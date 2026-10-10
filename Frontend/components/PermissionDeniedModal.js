@@ -35,7 +35,7 @@ export default function PermissionDeniedModal({ isOpen, onClose, actionName = "�
 
         {/* Message */}
         <p className={styles.message}>
-          عذراً، إجراء <strong className={styles.actionHighlight}>"{actionName}"</strong> وتعديل بيانات المخزن ورؤية الأسعار مخصصة فقط لـ <strong className={styles.adminHighlight}>مسؤول المخزن (Admin)</strong>.
+          عذراً، إجراء <strong className={styles.actionHighlight}>&quot;{actionName}&quot;</strong> وتعديل بيانات المخزن ورؤية الأسعار مخصصة فقط لـ <strong className={styles.adminHighlight}>مسؤول المخزن (Admin)</strong>.
         </p>
 
         {/* Current Role Tag */}

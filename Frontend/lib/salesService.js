@@ -261,7 +261,8 @@ export async function createSaleInvoice(saleData) {
     customerName: customer?.name || "عميل نقدي",
     cashier: cashier ? {
       uid: cashier.uid || cashier.id || null,
-      name: cashier.displayName || cashier.name || "كاشير المحل"
+      name: cashier.displayName || cashier.name || "كاشير المحل",
+      branch: cashier.branch || ""
     } : null,
     sellerEmployee: sellerEmployee ? {
       id: sellerEmployee.id,

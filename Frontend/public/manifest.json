@@ -1,7 +1,7 @@
 {
-  "name": "مخزن نيللي للميكاب | Nelly Cosmetics Warehouse",
-  "short_name": "مخزن Nelly",
-  "description": "نظام إدارة وجرد مخزن مستحضرات التجميل والميكاب - متجر Nelly",
+  "name": "Nelly",
+  "short_name": "Nelly",
+  "description": "Nelly — نظام إدارة المبيعات والمخزون",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

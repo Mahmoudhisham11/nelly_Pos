@@ -77,6 +77,7 @@ export function AuthProvider({ children }) {
             roles: userInfo.roles || [userInfo.role || "admin"],
             permissions: userInfo.permissions || ["admin.all"],
             branches: userInfo.branches || [],
+            branch: userInfo.branch || "",
           };
           setUser(userObj);
           setRole(userObj.role);

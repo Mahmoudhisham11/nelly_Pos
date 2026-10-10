@@ -540,7 +540,7 @@ export default function SuppliersPage() {
               تأكيد حذف المورد
             </h3>
             <p className={styles.deleteModalText}>
-              هل أنت متأكد من حذف المورد <strong className={styles.deleteTargetName}>"{supplierToDelete.name}"</strong> من النظام؟
+              هل أنت متأكد من حذف المورد <strong className={styles.deleteTargetName}>&quot;{supplierToDelete.name}&quot;</strong> من النظام؟
             </p>
 
             <div className={styles.deleteActionsRow}>

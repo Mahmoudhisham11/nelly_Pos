@@ -67,7 +67,7 @@ export default function Navbar({ onOpenAddModal, onOpenMobileSidebar, title, act
 
         <div>
           <h1 className={styles.title}>
-            {title || pageTitles[pathname] || "مخزن Nelly للميكاب"}
+            {title || pageTitles[pathname] || "Nelly"}
           </h1>
           <p className={styles.subtitle}>
             مستحضرات التجميل وجرد المخزون

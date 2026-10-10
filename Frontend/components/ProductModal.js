@@ -201,7 +201,7 @@ export default function ProductModal({
                   : (isShop ? "تسجيل صنف جديد بالمحل" : "تسجيل صنف جديد بالمخزن")}
               </h2>
               <p className={styles.headerSubtitle}>
-                {isShop ? "بضاعة محل نيللي لمستحضرات التجميل والميكاب" : "مخزن نيللي لمستحضرات التجميل والميكاب"}
+                {isShop ? "بضاعة محل Nelly" : "مخزن Nelly"}
               </p>
             </div>
           </div>

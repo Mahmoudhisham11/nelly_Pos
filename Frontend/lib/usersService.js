@@ -53,10 +53,6 @@ export async function updateUser(userId, patch) {
   return check(await api.put(`/users/${userId}`, patch), "تعذر حفظ التعديل.");
 }
 
-export async function updateUserRole(userId, newRole) {
-  return updateUser(userId, { role: normalizeRole(newRole) });
-}
-
 export async function deleteUserDoc(userId) {
   return check(await api.delete(`/users/${userId}`), "تعذر حذف المستخدم.");
 }

@@ -657,7 +657,7 @@ export default function ExpensesPage() {
               تأكيد حذف بند المصروف
             </h3>
             <p className={styles.deleteModalText}>
-              هل أنت متأكد من حذف البند <strong className={styles.deleteTargetName}>"{itemToDelete.name}"</strong> نهائياً من قائمة المصاريف؟
+              هل أنت متأكد من حذف البند <strong className={styles.deleteTargetName}>&quot;{itemToDelete.name}&quot;</strong> نهائياً من قائمة المصاريف؟
             </p>
 
             <div className={styles.deleteActionsRow}>

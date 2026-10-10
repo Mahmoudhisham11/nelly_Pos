@@ -585,7 +585,7 @@ export default function EmployeesPage() {
                 <div className={`glass-card ${styles.emptyDirectoryCard}`}>
                   <Users size={42} color="#9ca3af" className={styles.emptyDirectoryIcon} />
                   <h4 className={styles.emptyDirectoryTitle}>لا يوجد موظفون مسجلون</h4>
-                  <p className={styles.emptyDirectorySub}>اضغط على زر "إضافة موظف جديد" للبدء</p>
+                  <p className={styles.emptyDirectorySub}>اضغط على زر &quot;إضافة موظف جديد&quot; للبدء</p>
                 </div>
               ) : (
                 <div className={styles.employeeGrid}>

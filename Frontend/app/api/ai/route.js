@@ -3,7 +3,6 @@
 // checks that the caller is a signed-in member of a shop with an active subscription, enforces a daily quota,
 // and forwards ONE request to the model: OpenRouter when OPENROUTER_API_KEY is set (default model "openrouter/free"),
 // otherwise Claude (ANTHROPIC_API_KEY). Tool definitions live here (lib/aiToolDefs.js), never in the client.
-import fs from "node:fs";
 import Anthropic from "@anthropic-ai/sdk";
 import openrouter from "@/lib/openrouter.cjs";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
@@ -36,12 +35,9 @@ export function OPTIONS(req) {
 
 function adminDb() {
   if (!getApps().length) {
-    // Hosted: the key as one-line JSON in FIREBASE_SERVICE_ACCOUNT. Local run: the serviceAccount.json file next to the app.
-    const file = process.env.FIREBASE_SERVICE_ACCOUNT_FILE || "serviceAccount.json";
-    const raw = process.env.FIREBASE_SERVICE_ACCOUNT || (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
-    if (raw) initializeApp({ credential: cert(JSON.parse(raw)) });
-    else if (process.env.FIRESTORE_EMULATOR_HOST) initializeApp({ projectId: process.env.GCLOUD_PROJECT || "demo-nelly" }); // local tests against the emulators
-    else throw new Error("FIREBASE_SERVICE_ACCOUNT is not set");
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT is not set");
+    initializeApp({ credential: cert(JSON.parse(raw)) });
   }
   return getFirestore();
 }

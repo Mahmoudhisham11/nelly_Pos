@@ -730,7 +730,7 @@ export default function CustomersPage() {
               تأكيد حذف حساب العميل
             </h3>
             <p className={styles.deleteModalDesc}>
-              هل أنت متأكد من حذف العميل <strong>"{customerToDelete.name}"</strong> نهائياً من النظام؟
+              هل أنت متأكد من حذف العميل <strong>&quot;{customerToDelete.name}&quot;</strong> نهائياً من النظام؟
             </p>
 
             <div className={styles.deleteModalActions}>

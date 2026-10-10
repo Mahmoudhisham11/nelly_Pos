@@ -224,7 +224,7 @@ export default function DashboardPage() {
                 </h2>
                 <div className={styles.heroSubtitle}>
                   <span>لوحة المتابعة الشاملة لـ</span>
-                  <strong className="gradient-text-rose">مخزن Nelly للميكاب</strong>
+                  <strong className="gradient-text-rose">Nelly</strong>
                   <span className={styles.heroRoleTag}>
                     {isAdmin ? "👑 مسؤول النظام" : "👤 كاشير"}
                   </span>

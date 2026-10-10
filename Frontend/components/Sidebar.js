@@ -123,7 +123,7 @@ export default function Sidebar({ isMobileOpen, onCloseMobile }) {
             </div>
             <div>
               <h2 className={styles.brandTitle}>
-                مخزن <span className="gradient-text-rose">Nelly</span>
+                <span className="gradient-text-rose">Nelly</span>
               </h2>
               <span className={styles.brandSubtitle}>
                 مستحضرات التجميل والميكاب

@@ -7,10 +7,8 @@ Frontend/   الواجهة الأصلية (Next.js) + غلاف Electron
 Backend/    الـ Backend (@nelly/core): نفس endpoints ونفس شكل الردود ونفس قاعدة SQLite القديمة، مكتوب بـ TypeScript
 ```
 
-## التشغيل على الجهاز
-شوف **`دليل التشغيل.md`**: ملفات `0-` لـ `4-` (سحب بيانات العميل، إعداد السحابة، الويب، الديسكتوب، إعادة البناء). محتاج Node.js 22.13 أو أحدث.
-
-للتطوير: `npm run dev`. للاختبارات: `npm test`. نسخة سطح المكتب (Electron): `npm run desktop`.
+## التطوير
+للتطوير: `npm run dev`. نسخة سطح المكتب (Electron): `npm run desktop`. يحتاج Node.js 22.13 أو أحدث.
 
 ## كيف تتصل الواجهة بالـ Backend
 الواجهة بتنادي نفس مسارات الـ REST القديمة (`/sales` و`/products`...). `Frontend/lib/transport.js` بيسلّمها للـ Backend داخل نفس العملية:
@@ -18,7 +16,7 @@ Backend/    الـ Backend (@nelly/core): نفس endpoints ونفس شكل ال�
 - المتصفح: عبر `/api/rpc` على خادم Next المحلي (معطّل على Vercel).
 
 ## الحالة
-- Backend: كل endpoints الـ FastAPI القديم منقولة (auth, users, roles, branches, categories, products, shop, inventory, sales, returns, shifts, customers, suppliers, employees, expenses, treasury, sync) و59 اختبار ناجحة.
+- Backend: كل endpoints الـ FastAPI القديم منقولة (auth, users, roles, branches, categories, products, shop, inventory, sales, returns, shifts, customers, suppliers, employees, expenses, treasury, sync).
 - لسه: نسخة الويب على Vercel (SQLite WASM في المتصفح)، مزامنة Firestore الفعلية، صفحة الـ AI وPWA من نسخة الويب، ترحيل بيانات nelly القديمة.
 
 ## المزامنة
@@ -31,7 +29,6 @@ Backend/    الـ Backend (@nelly/core): نفس endpoints ونفس شكل ال�
 - إنشاء محل/تجديد اشتراك بعد تأكيد انستاباي: `node Frontend/scripts/provision-shop.mjs create|renew|status ...` (يحتاج `GOOGLE_APPLICATION_CREDENTIALS`).
 - ترحيل داتا العميل القديم: `node Frontend/scripts/migrate-to-shop.mjs <shopId>` (تجربة) ثم `--apply`.
 - الجهاز يتربط من قائمة المزامنة أعلى الشاشة بحساب المحل. بدون ربط أو بعد انتهاء الاشتراك لا ترفع بيانات (يعمل محليا).
-- اختبار القواعد: `firestore-tests/rules.test.mjs` عبر `firebase emulators:exec`.
 
 ## نسخة الويب / PWA (أوفلاين)
 - `npm run build:web -w Frontend` (وعلى Vercel عبر `Frontend/vercel.json`): الباك إند نفسه بيشتغل **جوه المتصفح** (Web Worker + SQLite WASM + OPFS). البيانات بتتخزن في المتصفح وبتتزامن مع السحابة. بعد أول تحميل التطبيق بيفتح بدون إنترنت (Service Worker).

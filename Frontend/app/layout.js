@@ -21,9 +21,9 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "مخزن نيللي للميكاب | Nelly Cosmetics Desktop",
-  description: "نظام إدارة وجرد مخزن مستحضرات التجميل والميكاب — Nelly Desktop",
-  applicationName: "مخزن Nelly Desktop",
+  title: "Nelly",
+  description: "Nelly — نظام إدارة المبيعات والمخزون",
+  applicationName: "Nelly",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",

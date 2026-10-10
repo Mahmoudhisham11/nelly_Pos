@@ -3,6 +3,7 @@
 import { invoiceDate } from "@/lib/invoiceTime";
 import React, { useRef, useState } from "react";
 import { formatNumber } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 import { 
   Printer, 
   X, 
@@ -115,6 +116,8 @@ const RECEIPT_PRINT_CSS = `
 export default function POSReceiptModal({ isOpen, onClose, invoice, onNewSale }) {
   const receiptRef = useRef(null);
   const [includePolicy, setIncludePolicy] = useState(true);
+  const { user } = useAuth();
+  const shopName = invoice?.cashier?.branch || user?.branch || "Nelly";
 
 
   // Prints the on-screen receipt itself (same layout, sizes and grid as the original Nelly receipt).
@@ -134,7 +137,7 @@ export default function POSReceiptModal({ isOpen, onClose, invoice, onNewSale })
     });
 
     const msg = 
-`🌸 *فاتورة مشتريات - Nelly* 🌸
+`🌸 *فاتورة مشتريات - ${shopName}* 🌸
 ━━━━━━━━━━━━━━━━━━
 📄 *رقم الفاتورة:* ${invoice.invoiceNumber || ""}
 📅 *التاريخ:* ${invoiceDate(invoice).toLocaleString("ar-EG", { timeZone: "Africa/Cairo" })}
@@ -200,7 +203,7 @@ export default function POSReceiptModal({ isOpen, onClose, invoice, onNewSale })
             {/* 1. Header: Nelly Title & Invoice Number */}
             <div className={styles.receiptHeader}>
               <h1 className={styles.brandTitle}>
-                Nelly
+                {shopName}
               </h1>
               <div className={styles.invoiceNumRow}>
                 رقم الفاتورة: <span className={`num-font ${styles.boldInvoiceNum}`} dir="ltr">#{invoice.invoiceNumber}</span>
