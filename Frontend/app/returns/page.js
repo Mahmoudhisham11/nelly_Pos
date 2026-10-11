@@ -5,19 +5,16 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-import { 
-  searchSoldProductsInReports, 
-  returnProductQuantityFromReports 
-} from "@/lib/salesService";
+import { searchSoldProductsInReports, returnProductFromDay } from "@/lib/salesService";
 import { formatNumber } from "@/lib/utils";
 import confetti from "canvas-confetti";
-import { 
-  RotateCcw, 
-  Search, 
-  CheckCircle2, 
-  AlertCircle, 
-  X, 
-  Sparkles, 
+import {
+  RotateCcw,
+  Search,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  Sparkles,
   PackageOpen,
   Boxes,
   ChevronDown,
@@ -43,6 +40,7 @@ export default function ReturnsPage() {
 
   // Return action state per product key
   const [returnQuantities, setReturnQuantities] = useState({});
+  const [selectedDays, setSelectedDays] = useState({}); // groupKey -> day key (closed report id, or "current" for the open shift)
   const [processingKey, setProcessingKey] = useState(null);
   const [expandedInvoices, setExpandedInvoices] = useState({});
 
@@ -70,6 +68,28 @@ export default function ReturnsPage() {
     setTimeout(() => setToastMessage(""), 5000);
   };
 
+  const dayLabel = (day) => {
+    if (day.isCurrentShift) return "الوردية الحالية (المفتوحة)";
+    const d = day.date ? new Date(`${String(day.date).slice(0, 10)}T12:00:00`) : null;
+    const text = d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString("ar-EG", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "يوم غير معروف";
+    return `${text} — تقفيلة ${day.reportNumber || ""}`.trim();
+  };
+  const selectedDay = (prod) => (prod.days || []).find((d) => d.key === selectedDays[prod.groupKey]) || null;
+  const maxQtyOf = (prod) => selectedDay(prod)?.quantity || 0;
+
+  // Start a fresh result list: quantity 1 and, when the product was sold on a single day, that day already chosen
+  const applyResults = (results) => {
+    setSearchResults(results);
+    const initialQtys = {};
+    const initialDays = {};
+    results.forEach((prod) => {
+      initialQtys[prod.groupKey] = 1;
+      if ((prod.days || []).length === 1) initialDays[prod.groupKey] = prod.days[0].key;
+    });
+    setReturnQuantities(initialQtys);
+    setSelectedDays(initialDays);
+  };
+
   // Perform search across nelly_reports and sync with live shop products
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
@@ -85,14 +105,7 @@ export default function ReturnsPage() {
 
     try {
       const results = await searchSoldProductsInReports(clean);
-      setSearchResults(results);
-      
-      // Initialize return quantities
-      const initialQtys = {};
-      results.forEach(prod => {
-        initialQtys[prod.groupKey] = 1;
-      });
-      setReturnQuantities(initialQtys);
+      applyResults(results);
 
       if (results.length === 0) {
         setSearchError(`لم يتم العثور على أي مبيعات مسجلة في التقارير لهذا الصنف أو الباركود "${clean}".`);
@@ -111,12 +124,7 @@ export default function ReturnsPage() {
     if (!clean) return;
     try {
       const results = await searchSoldProductsInReports(clean);
-      setSearchResults(results);
-      const initialQtys = {};
-      results.forEach(prod => {
-        initialQtys[prod.groupKey] = 1;
-      });
-      setReturnQuantities(initialQtys);
+      applyResults(results);
     } catch (err) {
       console.error("Refresh error:", err);
     }
@@ -143,11 +151,19 @@ export default function ReturnsPage() {
     }));
   };
 
+  const handleDayChange = (prod, key) => {
+    setSelectedDays((prev) => ({ ...prev, [prod.groupKey]: key }));
+    setReturnQuantities((prev) => ({ ...prev, [prod.groupKey]: 1 }));
+  };
+
   // Open confirmation modal
   const openConfirmModal = (prod) => {
-    const qty = returnQuantities[prod.groupKey] || 1;
+    const day = selectedDay(prod);
+    if (!day) return;
+    const qty = Math.min(returnQuantities[prod.groupKey] || 1, day.quantity);
     setPendingReturn({
       product: prod,
+      day,
       quantity: qty
     });
   };
@@ -155,17 +171,11 @@ export default function ReturnsPage() {
   // Execute return: deduct from nelly_reports, add to nelly_shop_products
   const handleExecuteReturn = async () => {
     if (!pendingReturn) return;
-    const { product, quantity } = pendingReturn;
+    const { product, day, quantity } = pendingReturn;
 
     setProcessingKey(product.groupKey);
     try {
-      const res = await returnProductQuantityFromReports({
-        productId: product.productId,
-        shopProductId: product.shopProductId,
-        barcode: product.barcode,
-        name: product.name,
-        returnQuantity: quantity
-      });
+      const res = await returnProductFromDay({ product, day, quantity });
 
       if (res.success) {
         confetti({
@@ -213,13 +223,13 @@ export default function ReturnsPage() {
         </div>
       )}
 
-      <Sidebar 
+      <Sidebar
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       <div className="main-content">
-        <Navbar 
+        <Navbar
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           title="حركة الصنف"
         />
@@ -260,7 +270,7 @@ export default function ReturnsPage() {
 
             <form onSubmit={handleSearch} className={styles.searchForm}>
               <div className={styles.searchFieldWrap}>
-                <input 
+                <input
                   type="text"
                   required
                   autoFocus
@@ -272,10 +282,10 @@ export default function ReturnsPage() {
                   }}
                   className={`form-input num-font ${styles.searchInput}`}
                 />
-                <Search 
-                  size={22} 
-                  color="#db2777" 
-                  className={styles.searchFieldIcon} 
+                <Search
+                  size={22}
+                  color="#db2777"
+                  className={styles.searchFieldIcon}
                 />
                 {searchQuery && (
                   <button
@@ -293,7 +303,7 @@ export default function ReturnsPage() {
                 )}
               </div>
 
-              <button 
+              <button
                 type="submit"
                 disabled={searching}
                 className={`btn-primary ${styles.searchSubmitBtn}`}
@@ -350,12 +360,13 @@ export default function ReturnsPage() {
 
               <div className={styles.resultsList}>
                 {searchResults.map((prod) => {
-                  const currentSelectedQty = returnQuantities[prod.groupKey] || 1;
+                  const maxQty = maxQtyOf(prod);
+                  const currentSelectedQty = Math.min(returnQuantities[prod.groupKey] || 1, Math.max(maxQty, 1));
                   const isProcessingThis = processingKey === prod.groupKey;
                   const isExpanded = !!expandedInvoices[prod.groupKey];
 
                   return (
-                    <div 
+                    <div
                       key={prod.groupKey}
                       className={`glass-card ${styles.resultCard}`}
                     >
@@ -427,6 +438,27 @@ export default function ReturnsPage() {
 
                       {/* Action Bar: Quantity to return & Confirm Button */}
                       <div className={styles.actionBar}>
+                        {/* Sale day: the return comes out of that day's closing report */}
+                        <div className={styles.qtyControlGroup}>
+                          <span className={styles.qtyControlLabel}>
+                            تاريخ البيع (التقفيلة):
+                          </span>
+                          <select
+                            value={selectedDays[prod.groupKey] || ""}
+                            onChange={(e) => handleDayChange(prod, e.target.value)}
+                            disabled={isProcessingThis}
+                            className="form-input"
+                            style={{ minWidth: 260 }}
+                          >
+                            <option value="">اختر اليوم الذي اتباع فيه…</option>
+                            {(prod.days || []).map((day) => (
+                              <option key={day.key} value={day.key}>
+                                {dayLabel(day)} — بيع {day.quantity} قطعة
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
                         {/* Quantity Controls */}
                         <div className={styles.qtyControlGroup}>
                           <span className={styles.qtyControlLabel}>
@@ -435,34 +467,34 @@ export default function ReturnsPage() {
                           <div className={styles.qtyControlBox}>
                             <button
                               type="button"
-                              onClick={() => handleQtyChange(prod.groupKey, (prod.totalSoldQuantity || prod.totalSoldQuantityInReports), -1)}
+                              onClick={() => handleQtyChange(prod.groupKey, maxQty, -1)}
                               disabled={currentSelectedQty <= 1 || isProcessingThis}
                               className={`${styles.qtyBtn} ${currentSelectedQty <= 1 ? styles.btnDisabled : styles.btnActive}`}
                             >
                               <Minus size={16} />
                             </button>
 
-                            <input 
+                            <input
                               type="number"
                               min="1"
-                              max={prod.totalSoldQuantity || prod.totalSoldQuantityInReports}
+                              max={maxQty}
                               value={currentSelectedQty}
-                              onChange={(e) => handleQtyInput(prod.groupKey, (prod.totalSoldQuantity || prod.totalSoldQuantityInReports), e.target.value)}
-                              disabled={isProcessingThis}
+                              onChange={(e) => handleQtyInput(prod.groupKey, maxQty, e.target.value)}
+                              disabled={isProcessingThis || maxQty <= 0}
                               className={`num-font ${styles.qtyInput}`}
                             />
 
                             <button
                               type="button"
-                              onClick={() => handleQtyChange(prod.groupKey, (prod.totalSoldQuantity || prod.totalSoldQuantityInReports), 1)}
-                              disabled={currentSelectedQty >= (prod.totalSoldQuantity || prod.totalSoldQuantityInReports) || isProcessingThis}
-                              className={`${styles.qtyBtn} ${currentSelectedQty >= (prod.totalSoldQuantity || prod.totalSoldQuantityInReports) ? styles.btnDisabled : styles.btnActive}`}
+                              onClick={() => handleQtyChange(prod.groupKey, maxQty, 1)}
+                              disabled={currentSelectedQty >= maxQty || isProcessingThis}
+                              className={`${styles.qtyBtn} ${currentSelectedQty >= maxQty ? styles.btnDisabled : styles.btnActive}`}
                             >
                               <Plus size={16} />
                             </button>
                           </div>
                           <span className={styles.maxQtyHint}>
-                            (الحد الأقصى المتاح للإرجاع: {prod.totalSoldQuantity || prod.totalSoldQuantityInReports} قطعة)
+                            {maxQty > 0 ? `(الحد الأقصى في هذا اليوم: ${maxQty} قطعة)` : "(اختر يوم البيع أولاً)"}
                           </span>
                         </div>
 
@@ -470,7 +502,7 @@ export default function ReturnsPage() {
                         <button
                           type="button"
                           onClick={() => openConfirmModal(prod)}
-                          disabled={isProcessingThis || (prod.totalSoldQuantity || prod.totalSoldQuantityInReports) <= 0}
+                          disabled={isProcessingThis || maxQty <= 0}
                           className={`btn-primary ${styles.returnSubmitBtn}`}
                         >
                           <RotateCcw size={18} />
@@ -488,8 +520,8 @@ export default function ReturnsPage() {
                           >
                             <Receipt size={16} />
                             <span>
-                              {isExpanded 
-                                ? "إخفاء تفاصيل فواتير المبيعات المسجل بها هذا الصنف" 
+                              {isExpanded
+                                ? "إخفاء تفاصيل فواتير المبيعات المسجل بها هذا الصنف"
                                 : `عرض تفاصيل الفواتير المسجل بها هذا الصنف (عدد ${prod.invoices.length} فاتورة)`}
                             </span>
                             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -582,6 +614,10 @@ export default function ReturnsPage() {
                 {pendingReturn.product.name}
               </div>
               <div className={styles.modalQtyRow}>
+                <span className={styles.modalQtyLabel}>يوم البيع:</span>
+                <span className={styles.modalQtyVal}>{dayLabel(pendingReturn.day)}</span>
+              </div>
+              <div className={styles.modalQtyRow}>
                 <span className={styles.modalQtyLabel}>الكمية المرتجعة:</span>
                 <span className={styles.modalQtyVal}>
                   <span className="num-font" dir="ltr">{pendingReturn.quantity}</span> قطعة
@@ -596,7 +632,11 @@ export default function ReturnsPage() {
               </div>
               <div className={styles.modalImpactItem}>
                 <CheckCircle2 size={16} />
-                <span>سيتم خصم هذه الكمية وتعديل إجماليات فواتير تقارير المبيعات.</span>
+                <span>سيتم خصمها من فواتير ذلك اليوم وتعديل مبيعات وأرباح تقفيلته، وسعر الإرجاع هو سعر البيع وقتها بعد حصة الخصم.</span>
+              </div>
+              <div className={styles.modalImpactItem}>
+                <CheckCircle2 size={16} />
+                <span>المبلغ المردود يتسجّل خروج كاش بتاريخ اليوم (وليس في تقفيلة اليوم القديم).</span>
               </div>
             </div>
 

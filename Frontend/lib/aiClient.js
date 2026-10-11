@@ -7,7 +7,8 @@ const cairoDay = (d = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone
 
 const MAX_STEPS = 8;
 // Web build: same origin. Desktop build (static files): set NEXT_PUBLIC_AI_URL to the hosted site, e.g. https://nelly.devora.app
-const endpoint = () => `${process.env.NEXT_PUBLIC_AI_URL || ""}/api/ai`;
+// The trailing slash matters: the site uses trailingSlash, so "/api/ai" answers 308 and a cross-origin preflight cannot follow a redirect.
+const endpoint = () => `${(process.env.NEXT_PUBLIC_AI_URL || "").replace(/\/+$/, "")}/api/ai/`;
 
 async function turn(messages) {
   const user = auth?.currentUser;

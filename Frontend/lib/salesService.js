@@ -478,6 +478,9 @@ export async function searchSoldProductsInReports(searchTerm) {
           pEntry.totalSoldQuantityInReports += qty;
           pEntry.invoices.push({
             reportId: rep.id,
+            dayKey: rep.id,
+            reportDate: rep.date || "",
+            itemRef: { productId, barcode, name },
             reportNumber: rep.reportNumber || "",
             source: "تقرير مؤرشف",
             isCurrentShift: false,
@@ -519,6 +522,9 @@ export async function searchSoldProductsInReports(searchTerm) {
         pEntry.totalSoldQuantityInActiveShift += qty;
         pEntry.invoices.push({
           reportId: null,
+          dayKey: "current",
+          reportDate: sale.date || "",
+          itemRef: { productId, barcode, name },
           reportNumber: "الوردية الحالية",
           source: "الوردية الحالية المفتوحة",
           isCurrentShift: true,
@@ -535,54 +541,65 @@ export async function searchSoldProductsInReports(searchTerm) {
     });
   });
 
-  return Array.from(productMap.values()).sort((a, b) => b.totalSoldQuantity - a.totalSoldQuantity);
+  const list = Array.from(productMap.values());
+  for (const prod of list) {
+    const byDay = new Map();
+    for (const inv of prod.invoices) {
+      if (!byDay.has(inv.dayKey)) {
+        byDay.set(inv.dayKey, { key: inv.dayKey, reportId: inv.reportId, isCurrentShift: !!inv.isCurrentShift, date: inv.reportDate, reportNumber: inv.reportNumber, quantity: 0, invoices: [] });
+      }
+      const day = byDay.get(inv.dayKey);
+      day.quantity += inv.soldQty;
+      day.invoices.push(inv);
+    }
+    prod.days = Array.from(byDay.values()).sort((a, b) => (Number(b.isCurrentShift) - Number(a.isCurrentShift)) || String(b.date).localeCompare(String(a.date)));
+  }
+  return list.sort((a, b) => b.totalSoldQuantity - a.totalSoldQuantity);
 }
 
-// Return Product Quantity from Reports
-export async function returnProductQuantityFromReports({
-  productId,
-  shopProductId,
-  barcode,
-  name,
-  returnQuantity
-}) {
-  const qtyToReturn = parseInt(returnQuantity, 10);
-  if (isNaN(qtyToReturn) || qtyToReturn <= 0) {
-    throw new Error("يرجى إدخال كمية صالحة للإرجاع.");
+// Return a product from the invoices of ONE sale day (a closed day's report, or the open shift).
+// The server returns it from each invoice (so the refund is the price and discount of that sale, that day's report
+// is reduced, stock goes back and the cash refund is recorded today) and refuses more than the invoice still holds.
+export async function returnProductFromDay({ product, day, quantity }) {
+  const qtyToReturn = parseInt(quantity, 10);
+  if (isNaN(qtyToReturn) || qtyToReturn <= 0) throw new Error("يرجى إدخال كمية صالحة للإرجاع.");
+  if (!day) throw new Error("اختر تاريخ البيع أولاً.");
+  if (qtyToReturn > day.quantity) throw new Error(`الكمية المباعة في هذا اليوم ${day.quantity} قطعة فقط.`);
+
+  let left = qtyToReturn;
+  let done = 0;
+  let refunded = 0;
+  for (const inv of day.invoices) {
+    if (left <= 0) break;
+    const take = Math.min(left, inv.soldQty);
+    if (take <= 0 || !inv.invoiceNumber) continue;
+    try {
+      const ret = unwrap(await api.post("/returns", {
+        returnNumber: generateReturnNumber(),
+        invoiceNumber: inv.invoiceNumber,
+        ...(day.reportId ? { reportId: day.reportId } : {}),
+        returnReason: day.isCurrentShift ? "مرتجع من الوردية الحالية" : `مرتجع من تقفيلة يوم ${day.date}`,
+        returnedItems: [{
+          productId: inv.itemRef?.productId || product.productId || "",
+          barcode: inv.itemRef?.barcode || product.barcode || "",
+          name: inv.itemRef?.name || product.name,
+          quantity: take,
+        }],
+      }));
+      refunded = roundCurrency(refunded + Number(ret?.refundedAmount || 0));
+    } catch (err) {
+      const msg = err?.message || "تعذر تنفيذ المرتجع.";
+      throw new Error(done > 0 ? `تم إرجاع ${done} قطعة فقط ثم توقف: ${msg}` : msg);
+    }
+    done += take;
+    left -= take;
   }
-
-  // The server restocks the shop inside the same transaction that records the return,
-  // so the stock is only touched once (and not at all if the return is rejected).
-  const shopList = await api.get("/shop/products?limit=5000");
-  let targetShopProduct = null;
-  if (Array.isArray(shopList)) {
-    targetShopProduct = shopList.find(p => 
-      (shopProductId && p.id === shopProductId) ||
-      (productId && p.id === productId) ||
-      (barcode && (p.barcode || "").trim() === barcode.trim()) ||
-      (name && (p.name || "").trim().toLowerCase() === name.trim().toLowerCase())
-    );
-  }
-
-  unwrap(await api.post("/returns", {
-    returnNumber: generateReturnNumber(),
-    returnReason: "إرجاع من تقارير سابقة",
-    returnedItems: [{
-      productId: productId || targetShopProduct?.id || "",
-      barcode: barcode || targetShopProduct?.barcode || "",
-      name: name || targetShopProduct?.name || "صنف مرتجع",
-      quantity: qtyToReturn,
-      sellingPrice: targetShopProduct?.sellingPrice || 0,
-      wholesalePrice: targetShopProduct?.wholesalePrice || 0
-    }],
-    refundedAmount: roundCurrency(qtyToReturn * (targetShopProduct?.sellingPrice || 0))
-  }));
-
-  const newShopStock = (Number(targetShopProduct?.quantity) || 0) + qtyToReturn;
+  if (done < qtyToReturn) throw new Error(`تم إرجاع ${done} من ${qtyToReturn} قطعة فقط.`);
 
   return {
     success: true,
-    returnedQuantity: qtyToReturn,
-    newShopStock
+    returnedQuantity: done,
+    refundedAmount: refunded,
+    newShopStock: (Number(product.currentShopStock) || 0) + done,
   };
 }
