@@ -1,6 +1,6 @@
 {
   "name": "@nelly/frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Nelly UI (original nelly_desktop interface) - one codebase for web (Vercel) and desktop (Electron)",
   "main": "electron/main.js",
