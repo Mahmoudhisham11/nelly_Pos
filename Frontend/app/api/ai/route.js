@@ -6,7 +6,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import openrouter from "@/lib/openrouter.cjs";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { AI_TOOLS, AI_SYSTEM } from "@/lib/aiToolDefs";
 
@@ -42,6 +41,17 @@ function adminDb() {
   return getFirestore();
 }
 
+/** Verifies a Firebase ID token with Firebase's own REST endpoint (returns the uid). firebase-admin/auth is not used: its jwks-rsa/jose chain fails to load on Vercel. */
+async function verifyIdToken(idToken) {
+  const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`, {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) throw new Error("invalid token");
+  const user = (await res.json()).users?.[0];
+  if (!user?.localId || user.disabled) throw new Error("invalid token");
+  return user.localId;
+}
+
 const cairoDay = (d = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
 
 /** Only plain user/assistant turns made of known block types: no way to smuggle in a system message. */
@@ -63,7 +73,7 @@ export async function POST(req) {
     if (!token) return json(req, { error: "سجّل دخول السحابة أولاً (زر المزامنة بالأعلى)." }, 401);
     const db = adminDb();
     let uid;
-    try { uid = (await getAuth().verifyIdToken(token)).uid; } catch { return json(req, { error: "انتهت جلسة السحابة، سجّل الدخول مرة أخرى." }, 401); }
+    try { uid = await verifyIdToken(token); } catch { return json(req, { error: "انتهت جلسة السحابة، سجّل الدخول مرة أخرى." }, 401); }
 
     const link = await db.doc(`userShops/${uid}`).get();
     const shopId = link.exists ? link.data().shopId : null;
