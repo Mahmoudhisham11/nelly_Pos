@@ -14,3 +14,4 @@ client-data/
 release/
 dist/
 *.log
+.vercel
