@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import ProductModal, { CATEGORIES } from "@/components/ProductModal";
+import { searchProducts } from "@/lib/productSearch";
 import BarcodeModal from "@/components/BarcodeModal";
 import PrintInventoryModal from "@/components/PrintInventoryModal";
 import TransferModal from "@/components/TransferModal";
@@ -13,28 +14,28 @@ import PermissionDeniedModal from "@/components/PermissionDeniedModal";
 import CustomSelect from "@/components/CustomSelect";
 import ShopPurchaseInvoiceModal from "@/components/ShopPurchaseInvoiceModal";
 import ShopInvoicesHistoryModal from "@/components/ShopInvoicesHistoryModal";
-import { 
-  subscribeToShopProducts, 
+import {
+  subscribeToShopProducts,
   addShopProduct,
-  updateShopProduct, 
+  updateShopProduct,
   deleteShopProduct,
   transferFromShopToWarehouse
 } from "@/lib/shopService";
 import { subscribeToSuppliers } from "@/lib/suppliersService";
-import { 
-  subscribeToShopPurchases, 
-  createShopPurchaseInvoice, 
-  returnShopPurchaseItems 
+import {
+  subscribeToShopPurchases,
+  createShopPurchaseInvoice,
+  returnShopPurchaseItems
 } from "@/lib/shopPurchasesService";
 import { formatNumber, roundCurrency } from "@/lib/utils";
-import { 
-  Store, 
-  Search, 
-  Download, 
-  Printer, 
-  Trash2, 
-  Edit3, 
-  Barcode, 
+import {
+  Store,
+  Search,
+  Download,
+  Printer,
+  Trash2,
+  Edit3,
+  Barcode,
   RotateCcw,
   ShoppingBag,
   Receipt,
@@ -125,68 +126,68 @@ export default function ShopPage() {
 
   // Categories list for select
   const categoryOptions = useMemo(() => {
+    // the fixed sections plus any other section that products already use (e.g. "أخرى")
+    const extra = [...new Set(products.map((p) => p.category).filter((c) => c && !CATEGORIES.includes(c)))];
     return [
-      { id: "all", label: "جميع الأقسام" },
-      ...CATEGORIES.map(c => ({ id: c, label: c }))
+      { value: "all", label: "جميع الأقسام" },
+      ...[...CATEGORIES, ...extra].map(c => ({ value: c, label: c }))
     ];
-  }, []);
+  }, [products]);
 
   const statusOptions = [
-    { id: "all", label: "كل الحالات" },
-    { id: "in_stock", label: "متوفر بالمحل" },
-    { id: "low_stock", label: "مخزون قليل ⚠️" },
-    { id: "out_of_stock", label: "نفد من المحل ❌" }
+    { value: "all", label: "كل الحالات" },
+    { value: "in_stock", label: "متوفر بالمحل" },
+    { value: "low_stock", label: "مخزون قليل ⚠️" },
+    { value: "out_of_stock", label: "نفد من المحل ❌" }
   ];
 
   const sortOptions = [
-    { id: "newest", label: "الترتيب: الأحدث أولاً" },
-    { id: "oldest", label: "الترتيب: الأقدم أولاً" },
-    { id: "qty_high", label: "الكمية: من الأعلى للأقل" },
-    { id: "qty_low", label: "الكمية: من الأقل للأعلى" },
-    { id: "price_high", label: "سعر البيع: من الأعلى للأقل" },
-    { id: "price_low", label: "سعر البيع: من الأقل للأعلى" }
+    { value: "newest", label: "الترتيب: الأحدث أولاً" },
+    { value: "oldest", label: "الترتيب: الأقدم أولاً" },
+    { value: "qty_high", label: "الكمية: من الأعلى للأقل" },
+    { value: "qty_low", label: "الكمية: من الأقل للأعلى" },
+    { value: "price_high", label: "سعر البيع: من الأعلى للأقل" },
+    { value: "price_low", label: "سعر البيع: من الأقل للأعلى" }
   ];
 
   // Filtering & Sorting
   const filteredProducts = useMemo(() => {
-    return products
-      .filter((p) => {
-        const q = searchQuery.toLowerCase().trim();
-        const barcodeMatch = (p.barcode || "").toLowerCase().includes(q);
-        const nameMatch = (p.name || "").toLowerCase().includes(q);
-        const brandMatch = (p.brand || "").toLowerCase().includes(q);
-        const matchesSearch = !q || barcodeMatch || nameMatch || brandMatch;
+    const q = searchQuery.trim();
+    // searching: best match first (exact barcode/code, ...) unless another sort was chosen on purpose
+    const byRelevance = !!q && sortBy === "newest";
+    const searched = q ? searchProducts(products, q, { limit: Infinity, includeCategory: false }) : products;
+    const list = searched.filter((p) => {
+      const matchesCat = selectedCategory === "all" || p.category === selectedCategory;
 
-        const matchesCat = selectedCategory === "all" || p.category === selectedCategory;
+      const qty = Number(p.quantity) || 0;
+      const minThresh = Number(p.minThreshold) || 3;
+      let matchesStatus = true;
+      if (selectedStatus === "in_stock") matchesStatus = qty > minThresh;
+      else if (selectedStatus === "low_stock") matchesStatus = qty <= minThresh && qty > 0;
+      else if (selectedStatus === "out_of_stock") matchesStatus = qty <= 0;
 
-        const qty = Number(p.quantity) || 0;
-        const minThresh = Number(p.minThreshold) || 3;
-        let matchesStatus = true;
-        if (selectedStatus === "in_stock") matchesStatus = qty > minThresh;
-        else if (selectedStatus === "low_stock") matchesStatus = qty <= minThresh && qty > 0;
-        else if (selectedStatus === "out_of_stock") matchesStatus = qty === 0;
-
-        return matchesSearch && matchesCat && matchesStatus;
-      })
-      .sort((a, b) => {
-        if (sortBy === "newest" || sortBy === "oldest") {
-          const getTime = (item) => {
-            const d = item.created_at || item.createdAt;
-            if (!d) return 0;
-            if (typeof d === "number") return d;
-            if (d.seconds) return d.seconds * 1000;
-            const parsed = new Date(d).getTime();
-            return isNaN(parsed) ? 0 : parsed;
-          };
-          const diff = getTime(b) - getTime(a);
-          return sortBy === "newest" ? diff : -diff;
-        }
-        if (sortBy === "qty_high") return (Number(b.quantity) || 0) - (Number(a.quantity) || 0);
-        if (sortBy === "qty_low") return (Number(a.quantity) || 0) - (Number(b.quantity) || 0);
-        if (sortBy === "price_high") return (Number(b.sellingPrice) || 0) - (Number(a.sellingPrice) || 0);
-        if (sortBy === "price_low") return (Number(a.sellingPrice) || 0) - (Number(b.sellingPrice) || 0);
-        return 0;
-      });
+      return matchesCat && matchesStatus;
+    });
+    if (byRelevance) return list;
+    return list.sort((a, b) => {
+      if (sortBy === "newest" || sortBy === "oldest") {
+        const getTime = (item) => {
+          const d = item.created_at || item.createdAt;
+          if (!d) return 0;
+          if (typeof d === "number") return d;
+          if (d.seconds) return d.seconds * 1000;
+          const parsed = new Date(d).getTime();
+          return isNaN(parsed) ? 0 : parsed;
+        };
+        const diff = getTime(b) - getTime(a);
+        return sortBy === "newest" ? diff : -diff;
+      }
+      if (sortBy === "qty_high") return (Number(b.quantity) || 0) - (Number(a.quantity) || 0);
+      if (sortBy === "qty_low") return (Number(a.quantity) || 0) - (Number(b.quantity) || 0);
+      if (sortBy === "price_high") return (Number(b.sellingPrice) || 0) - (Number(a.sellingPrice) || 0);
+      if (sortBy === "price_low") return (Number(a.sellingPrice) || 0) - (Number(b.sellingPrice) || 0);
+      return 0;
+    });
   }, [products, searchQuery, selectedCategory, selectedStatus, sortBy]);
 
   // Totals
@@ -300,13 +301,13 @@ export default function ShopPage() {
   return (
     <div className="app-layout">
       {/* Sidebar */}
-      <Sidebar 
+      <Sidebar
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       <div className="main-content">
-        <Navbar 
+        <Navbar
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
         />
 
@@ -338,7 +339,7 @@ export default function ShopPage() {
 
             {/* Action buttons */}
             <div className={styles.headerActions}>
-              <button 
+              <button
                 onClick={() => setIsInvoicesHistoryModalOpen(true)}
                 className={`btn-secondary ${styles.whiteBtn}`}
                 title="سجل فواتير الواردات وشحنات الموردين والمرتجعات"
@@ -352,10 +353,10 @@ export default function ShopPage() {
                 )}
               </button>
 
-              <button 
-                onClick={() => setIsPrintModalOpen(true)} 
-                className={`btn-secondary ${styles.whiteBtn}`} 
-                title="معاينة وطباعة كشف جرد بضاعة المحل" 
+              <button
+                onClick={() => setIsPrintModalOpen(true)}
+                className={`btn-secondary ${styles.whiteBtn}`}
+                title="معاينة وطباعة كشف جرد بضاعة المحل"
               >
                 <Printer size={16} color="#db2777" />
                 طباعة الكشف
@@ -366,7 +367,7 @@ export default function ShopPage() {
                 تصدير CSV
               </button>
 
-              <button 
+              <button
                 onClick={() => {
                   if (!isAdmin) {
                     setPermissionDeniedAction("إضافة صنف جديد للمحل");
@@ -374,7 +375,7 @@ export default function ShopPage() {
                   }
                   setEditingProduct(null);
                   setIsAddModalOpen(true);
-                }} 
+                }}
                 className={`btn-secondary ${styles.whiteBtn}`}
                 title="تسجيل وإضافة صنف جديد بالمحل مباشرة"
               >
@@ -382,14 +383,14 @@ export default function ShopPage() {
                 إضافة صنف جديد
               </button>
 
-              <button 
+              <button
                 onClick={() => {
                   if (!isAdmin) {
                     setPermissionDeniedAction("إصدار فاتورة واردات للمحل");
                     return;
                   }
                   setIsPurchaseInvoiceModalOpen(true);
-                }} 
+                }}
                 className="btn-primary"
               >
                 <ShoppingBag size={18} />
@@ -402,12 +403,12 @@ export default function ShopPage() {
           <div className={`glass-panel ${styles.filterPanel}`}>
             <div className={styles.shopToolbarRow}>
               {/* Compact Search Input */}
-              <div 
+              <div
                 className={styles.compactSearchWrap}
                 onClick={() => searchInputRef.current?.focus()}
               >
                 <Search size={17} color="#db2777" className={styles.searchIcon} />
-                <input 
+                <input
                   ref={searchInputRef}
                   type="text"
                   className={styles.compactSearchInput}
@@ -416,12 +417,12 @@ export default function ShopPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {searchQuery && (
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setSearchQuery("");
                       searchInputRef.current?.focus();
-                    }} 
+                    }}
                     className={styles.clearSearchBtn}
                     title="مسح البحث"
                   >
@@ -450,7 +451,7 @@ export default function ShopPage() {
                   <div className={styles.filterPopoverMenu}>
                     <div className={styles.popoverSection}>
                       <label className={styles.popoverLabel}>القسم / التصنيف:</label>
-                      <CustomSelect 
+                      <CustomSelect
                         options={categoryOptions}
                         value={selectedCategory}
                         onChange={(cat) => setSelectedCategory(cat)}
@@ -459,7 +460,7 @@ export default function ShopPage() {
 
                     <div className={styles.popoverSection}>
                       <label className={styles.popoverLabel}>حالة المخزون:</label>
-                      <CustomSelect 
+                      <CustomSelect
                         options={statusOptions}
                         value={selectedStatus}
                         onChange={(stat) => setSelectedStatus(stat)}
@@ -468,7 +469,7 @@ export default function ShopPage() {
 
                     <div className={styles.popoverSection}>
                       <label className={styles.popoverLabel}>الترتيب حسب:</label>
-                      <CustomSelect 
+                      <CustomSelect
                         options={sortOptions}
                         value={sortBy}
                         onChange={(sb) => setSortBy(sb)}
@@ -476,12 +477,12 @@ export default function ShopPage() {
                     </div>
 
                     {(selectedCategory !== "all" || selectedStatus !== "all" || sortBy !== "newest") && (
-                      <button 
+                      <button
                         type="button"
                         onClick={() => {
                           resetFilters();
                           setIsFilterDropdownOpen(false);
-                        }} 
+                        }}
                         className={styles.popoverResetBtn}
                       >
                         <RotateCcw size={14} />
@@ -598,8 +599,8 @@ export default function ShopPage() {
                       <tr key={p.id}>
                         {/* Barcode */}
                         <td>
-                          <span 
-                            className={`num-font ${styles.barcodeTag}`} 
+                          <span
+                            className={`num-font ${styles.barcodeTag}`}
                             dir="ltr"
                           >
                             {p.barcode || "—"}
@@ -665,7 +666,7 @@ export default function ShopPage() {
                         <td className={styles.thCenter}>
                           <div className={styles.actionsGroup}>
                             {/* Return to Warehouse button */}
-                            <button 
+                            <button
                               onClick={() => setProductToReturn(p)}
                               className={`btn-secondary ${styles.returnWarehouseBtn}`}
                               title="إرجاع كمية من الصنف إلى المخزن"
@@ -675,7 +676,7 @@ export default function ShopPage() {
                             </button>
 
                             {/* Barcode Print */}
-                            <button 
+                            <button
                               onClick={() => setBarcodeProduct(p)}
                               className={`btn-secondary ${styles.barcodeBtn}`}
                               title="طباعة باركود"
@@ -684,7 +685,7 @@ export default function ShopPage() {
                             </button>
 
                             {/* Edit */}
-                            <button 
+                            <button
                               onClick={() => handleOpenEditModal(p)}
                               className={`btn-primary ${styles.editBtn}`}
                               title="تعديل بيانات الصنف بالمحل"
@@ -693,7 +694,7 @@ export default function ShopPage() {
                             </button>
 
                             {/* Delete */}
-                            <button 
+                            <button
                               onClick={() => setProductToDelete(p)}
                               className={`btn-danger ${styles.deleteBtn}`}
                               title="حذف الصنف من المحل"
@@ -713,7 +714,7 @@ export default function ShopPage() {
       </div>
 
       {/* Shop Purchase Invoice Modal */}
-      <ShopPurchaseInvoiceModal 
+      <ShopPurchaseInvoiceModal
         isOpen={isPurchaseInvoiceModalOpen}
         onClose={() => setIsPurchaseInvoiceModalOpen(false)}
         suppliers={suppliers}
@@ -722,7 +723,7 @@ export default function ShopPage() {
       />
 
       {/* Shop Invoices History & Returns Modal */}
-      <ShopInvoicesHistoryModal 
+      <ShopInvoicesHistoryModal
         isOpen={isInvoicesHistoryModalOpen}
         onClose={() => setIsInvoicesHistoryModalOpen(false)}
         invoices={shopPurchases}
@@ -732,7 +733,7 @@ export default function ShopPage() {
       />
 
       {/* Return to Warehouse Transfer Modal */}
-      <TransferModal 
+      <TransferModal
         isOpen={!!productToReturn}
         onClose={() => setProductToReturn(null)}
         product={productToReturn}
@@ -741,7 +742,7 @@ export default function ShopPage() {
       />
 
       {/* Product Modal for Shop (Single Item) */}
-      <ProductModal 
+      <ProductModal
         isOpen={isAddModalOpen}
         onClose={() => { setIsAddModalOpen(false); setEditingProduct(null); }}
         onSave={handleSaveProduct}
@@ -759,14 +760,14 @@ export default function ShopPage() {
       />
 
       {/* Barcode Print Modal */}
-      <BarcodeModal 
+      <BarcodeModal
         isOpen={!!barcodeProduct}
         onClose={() => setBarcodeProduct(null)}
         product={barcodeProduct}
       />
 
       {/* Permission Denied Popup */}
-      <PermissionDeniedModal 
+      <PermissionDeniedModal
         isOpen={!!permissionDeniedAction}
         onClose={() => setPermissionDeniedAction(null)}
         actionName={permissionDeniedAction}
@@ -775,7 +776,7 @@ export default function ShopPage() {
       {/* Delete Confirmation Modal */}
       {productToDelete && (
         <div className="modal-overlay" onClick={() => setProductToDelete(null)}>
-          <div 
+          <div
             className={`modal-content ${styles.deleteModalContainer}`}
             onClick={(e) => e.stopPropagation()}
           >

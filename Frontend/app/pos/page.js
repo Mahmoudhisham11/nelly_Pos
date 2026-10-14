@@ -15,39 +15,40 @@ import POSShiftInvoices from "@/components/pos/POSShiftInvoices";
 import { subscribeToShopProducts } from "@/lib/shopService";
 import { subscribeToCustomers, addCustomer } from "@/lib/customersService";
 import { subscribeToEmployees } from "@/lib/employeesService";
-import { 
-  subscribeToSales, 
-  createSaleInvoice, 
-  closeShiftAndMoveToReports, 
-  returnSaleItemOrInvoice 
+import {
+  subscribeToSales,
+  createSaleInvoice,
+  closeShiftAndMoveToReports,
+  returnSaleItemOrInvoice
 } from "@/lib/salesService";
 import { formatNumber, roundCurrency } from "@/lib/utils";
 import confetti from "canvas-confetti";
-import { 
-  ShoppingCart, 
-  Barcode, 
-  Search, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  CreditCard, 
-  Banknote, 
-  Smartphone, 
-  Clock, 
-  User, 
-  UserPlus, 
-  CheckCircle2, 
-  AlertCircle, 
-  Sparkles, 
-  Receipt, 
-  PauseCircle, 
-  FolderClock, 
-  Lock, 
-  TrendingUp, 
-  DollarSign, 
-  Coins, 
-  Users 
+import {
+  ShoppingCart,
+  Barcode,
+  Search,
+  Plus,
+  Minus,
+  Trash2,
+  CreditCard,
+  Banknote,
+  Smartphone,
+  Clock,
+  User,
+  UserPlus,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  Receipt,
+  PauseCircle,
+  FolderClock,
+  Lock,
+  TrendingUp,
+  DollarSign,
+  Coins,
+  Users
 } from "lucide-react";
+import { searchProducts, findExactProduct } from "@/lib/productSearch";
 import styles from "./pos.module.css";
 
 export default function POSPage() {
@@ -65,6 +66,7 @@ export default function POSPage() {
   // Search & Cart states
   const [searchTerm, setSearchTerm] = useState("");
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
+  const [searchHighlight, setSearchHighlight] = useState(0);
   const [cart, setCart] = useState([]);
   const [cartInitialized, setCartInitialized] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -209,7 +211,7 @@ export default function POSPage() {
   useEffect(() => {
     function handleClickOutside(event) {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         searchInputRef.current &&
         !searchInputRef.current.contains(event.target)
@@ -259,7 +261,7 @@ export default function POSPage() {
           if (prev) return prev;
           if (data.length === 1) return data[0];
           if (user) {
-            const matched = data.find(emp => 
+            const matched = data.find(emp =>
               (emp.email && user.email && emp.email.toLowerCase() === user.email.toLowerCase()) ||
               (emp.name && user.displayName && emp.name.toLowerCase() === user.displayName.toLowerCase())
             );
@@ -283,16 +285,14 @@ export default function POSPage() {
     setTimeout(() => setToastMessage(""), 4500);
   };
 
-  // Autocomplete products matching search term in shop
-  const matchingShopProducts = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) return [];
-    return shopProducts.filter(p => 
-      (p.name && p.name.toLowerCase().includes(term)) ||
-      (p.barcode && p.barcode.toLowerCase().includes(term)) ||
-      (p.category && p.category.toLowerCase().includes(term))
-    ).slice(0, 8);
-  }, [searchTerm, shopProducts]);
+  // Autocomplete products matching the search text in the shop: best matches first (exact barcode/code, then the rest)
+  const matchingShopProducts = useMemo(() => searchProducts(shopProducts, searchTerm, { limit: 30 }), [searchTerm, shopProducts]);
+
+  // Keep the highlighted result visible while moving with the arrow keys
+  useEffect(() => {
+    if (!searchDropdownOpen) return;
+    dropdownRef.current?.querySelector(`[data-result-index="${searchHighlight}"]`)?.scrollIntoView({ block: "nearest" });
+  }, [searchHighlight, searchDropdownOpen]);
 
   // Cart Management - Strictly blocks 0 quantity items
   const addToCart = (product) => {
@@ -310,7 +310,7 @@ export default function POSPage() {
           showToast(`الكمية المتاحة في المحل (${availableStock}) تم وضعها بالكامل في السلة.`);
           return prev;
         }
-        return prev.map(item => 
+        return prev.map(item =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1, stock: availableStock } : item
         );
       } else {
@@ -335,41 +335,31 @@ export default function POSPage() {
     }
   };
 
-  // Handle Search Input KeyPress (Scanner support for barcode and code)
+  // Search box keys: a scanner sends the exact barcode + Enter; typing uses the arrows to pick and Enter to add
   const handleSearchKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!matchingShopProducts.length) return;
       e.preventDefault();
-      const term = searchTerm.trim().toLowerCase();
-      if (!term) return;
-
-      // Exact barcode or item code match first
-      const exactMatch = shopProducts.find(p => {
-        const b = String(p.barcode || "").trim().toLowerCase();
-        const c = String(p.code || "").trim().toLowerCase();
-        return b === term || c === term;
-      });
-
-      if (exactMatch) {
-        if (Number(exactMatch.quantity ?? 0) <= 0) {
-          showToast(`عفواً، الصنف "${exactMatch.name}" نفد رصيده من المحل (الكمية: 0).`);
-          return;
-        }
-        addToCart(exactMatch);
-        return;
-      }
-
-      // Name or partial match
-      if (matchingShopProducts.length > 0) {
-        const availableItem = matchingShopProducts.find(p => Number(p.quantity ?? 0) > 0);
-        if (!availableItem) {
-          showToast(`عفواً، الصنف "${matchingShopProducts[0].name}" نفد رصيده من المحل (الكمية: 0).`);
-          return;
-        }
-        addToCart(availableItem);
-      } else {
-        showToast(`لا يوجد صنف في المحل يطابق "${searchTerm}".`);
-      }
+      setSearchDropdownOpen(true);
+      const last = matchingShopProducts.length - 1;
+      setSearchHighlight((i) => (e.key === "ArrowDown" ? Math.min(i + 1, last) : Math.max(i - 1, 0)));
+      return;
     }
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+
+    // Exact barcode or item code first (scanner)
+    const target = findExactProduct(shopProducts, searchTerm) || matchingShopProducts[Math.min(searchHighlight, matchingShopProducts.length - 1)];
+    if (!target) {
+      showToast(`لا يوجد صنف في المحل يطابق "${searchTerm}".`);
+      return;
+    }
+    if (Number(target.quantity ?? 0) <= 0) {
+      showToast(`عفواً، الصنف "${target.name}" نفد رصيده من المحل (الكمية: 0).`);
+      return;
+    }
+    addToCart(target);
   };
 
   const updateQuantity = (id, delta) => {
@@ -455,15 +445,15 @@ export default function POSPage() {
   }, [cartSubtotal, calculatedDiscount]);
 
   const parsedReceivedCash = parseFloat(receivedCash) || 0;
-  
+
   // When customer pays more than total -> change to return (المتبقي للعميل)
-  const changeForCustomer = parsedReceivedCash > cartFinalTotal 
-    ? roundCurrency(parsedReceivedCash - cartFinalTotal) 
+  const changeForCustomer = parsedReceivedCash > cartFinalTotal
+    ? roundCurrency(parsedReceivedCash - cartFinalTotal)
     : 0;
 
   // When customer pays less than total -> remaining balance needed (المتبقي على العميل)
   const remainingDue = cartFinalTotal > parsedReceivedCash && (parsedReceivedCash > 0 || paymentMethod === "آجل")
-    ? roundCurrency(cartFinalTotal - parsedReceivedCash) 
+    ? roundCurrency(cartFinalTotal - parsedReceivedCash)
     : 0;
 
   // Suspended Invoices logic
@@ -678,8 +668,8 @@ export default function POSPage() {
         showToast(`تم استرجاع الصنف وإعادته لرصيد المحل بنجاح (رقم المرتجع: ${res.returnNumber || ""}).`);
         const remainingItemsCount = (itemToReturn.invoice.items || []).length;
         if (remainingItemsCount <= 1) {
-          setCurrentShiftSales(prev => prev.filter(inv => 
-            inv.id !== itemToReturn.invoice.id && 
+          setCurrentShiftSales(prev => prev.filter(inv =>
+            inv.id !== itemToReturn.invoice.id &&
             inv.invoiceNumber !== itemToReturn.invoice.invoiceNumber &&
             inv.local_id !== itemToReturn.invoice.id
           ));
@@ -726,8 +716,8 @@ export default function POSPage() {
       const res = await returnSaleItemOrInvoice(returnPayload);
       if (res && (res.success || res.id || res.returnNumber)) {
         showToast(`تم إرجاع كامل الفاتورة بنجاح وحذفها من الوردية وإعادة كافة الأصناف لرصيد المحل.`);
-        setCurrentShiftSales(prev => prev.filter(inv => 
-          inv.id !== invoice.id && 
+        setCurrentShiftSales(prev => prev.filter(inv =>
+          inv.id !== invoice.id &&
           inv.invoiceNumber !== invoice.invoiceNumber &&
           inv.local_id !== invoice.id &&
           inv.local_id !== invoice.local_id
@@ -768,10 +758,10 @@ export default function POSPage() {
 
   // Active shift sales (strictly excludes returned, cancelled, and soft-deleted invoices)
   const activeShiftSales = useMemo(() => {
-    return currentShiftSales.filter(inv => 
-      !inv.deleted_at && 
-      inv.status !== "cancelled" && 
-      inv.status !== "returned" && 
+    return currentShiftSales.filter(inv =>
+      !inv.deleted_at &&
+      inv.status !== "cancelled" &&
+      inv.status !== "returned" &&
       inv.status !== "مرتجعة"
     );
   }, [currentShiftSales]);
@@ -780,7 +770,7 @@ export default function POSPage() {
   const filteredShiftSales = useMemo(() => {
     return activeShiftSales.filter(inv => {
       const query = invoiceSearchQuery.trim().toLowerCase();
-      const matchesSearch = !query || 
+      const matchesSearch = !query ||
         (inv.invoiceNumber && inv.invoiceNumber.toLowerCase().includes(query)) ||
         (inv.customer?.name && inv.customer.name.toLowerCase().includes(query)) ||
         (inv.customer?.phone && inv.customer.phone.includes(query));
@@ -874,19 +864,19 @@ export default function POSPage() {
       )}
 
       {/* Sidebar */}
-      <Sidebar 
+      <Sidebar
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       <div className="main-content">
-        <Navbar 
+        <Navbar
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           title="نقطة البيع (الكاشير)"
           actions={
             <div className={styles.topActionsWrap}>
               {/* Toggle Shift Invoices Button */}
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowShiftInvoices(!showShiftInvoices)}
                 className={`${styles.navToggleInvoicesBtn} ${showShiftInvoices ? styles.navToggleInvoicesBtnActive : styles.navToggleInvoicesBtnInactive}`}
@@ -907,7 +897,7 @@ export default function POSPage() {
               </button>
 
               {/* Close Shift Action Button */}
-              <button 
+              <button
                 type="button"
                 onClick={() => setIsCloseShiftModalOpen(true)}
                 className={styles.navCloseShiftBtn}
@@ -983,7 +973,7 @@ export default function POSPage() {
                 FULL-WIDTH SHOPPING CART & REGISTER
                 ------------------------------------------------------- */
             <div className="pos-register-container">
-              
+
               {/* Barcode & Search Input (Full Width Prominent Top Bar) */}
               <div className="pos-scanner-container">
                 <label className={`pos-scanner-label ${styles.scannerLabel}`}>
@@ -998,6 +988,7 @@ export default function POSPage() {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
+                      setSearchHighlight(0);
                       setSearchDropdownOpen(true);
                     }}
                     onKeyDown={handleSearchKeyDown}
@@ -1011,12 +1002,15 @@ export default function POSPage() {
                   {/* Autocomplete Menu */}
                   {searchDropdownOpen && matchingShopProducts.length > 0 && (
                     <div ref={dropdownRef} className="pos-search-dropdown-menu">
-                      {matchingShopProducts.map((p) => {
+                      {matchingShopProducts.map((p, index) => {
                         const stockCount = Number(p.quantity ?? 0);
                         const isOut = isNaN(stockCount) || stockCount <= 0;
                         return (
                           <div
                             key={p.id}
+                            data-result-index={index}
+                            onMouseEnter={() => setSearchHighlight(index)}
+                            style={index === searchHighlight ? { background: "var(--bg-card-hover)" } : undefined}
                             onClick={() => {
                               if (isOut) {
                                 showToast(`عفواً، الصنف "${p.name}" نفد رصيده من المحل (الكمية: 0).`);
@@ -1058,7 +1052,7 @@ export default function POSPage() {
 
                     <div className="pos-cart-actions-group">
                       {/* Held Invoices */}
-                      <button 
+                      <button
                         type="button"
                         onClick={() => setIsHeldInvoicesModalOpen(true)}
                         className={`btn-pos-held-invoices ${styles.heldInvoicesBtn}`}
@@ -1085,8 +1079,8 @@ export default function POSPage() {
 
                       {/* Clear Cart */}
                       {cart.length > 0 && (
-                        <button 
-                          onClick={clearCart} 
+                        <button
+                          onClick={clearCart}
                           className="btn-pos-clear-action"
                           title="تفريغ السلة"
                         >
@@ -1115,7 +1109,7 @@ export default function POSPage() {
                               <div className="pos-cart-item-details">
                                 <div className={styles.itemHeaderGroup}>
                                   <span className={`pos-item-title ${styles.itemTitle}`}>{item.name}</span>
-                                  <span 
+                                  <span
                                     className={liveStock <= 3 ? styles.stockPillLow : styles.stockPillNormal}
                                     title="إجمالي الكمية المتوفرة بالمحل"
                                   >
@@ -1133,7 +1127,7 @@ export default function POSPage() {
                               </div>
 
                               <div className="pos-qty-button-group">
-                                <button 
+                                <button
                                   type="button"
                                   onClick={() => updateQuantity(item.id, 1)}
                                   className={`btn-pos-qty ${styles.qtyBtn}`}
@@ -1150,7 +1144,7 @@ export default function POSPage() {
                                   className={styles.qtyDirectInput}
                                   title="انقر لتعديل الكمية مباشرة بالأرقام"
                                 />
-                                <button 
+                                <button
                                   type="button"
                                   onClick={() => updateQuantity(item.id, -1)}
                                   className={`btn-pos-qty ${styles.qtyBtn}`}
@@ -1158,7 +1152,7 @@ export default function POSPage() {
                                 >
                                   <Minus size={15} />
                                 </button>
-                                <button 
+                                <button
                                   type="button"
                                   onClick={() => removeFromCart(item.id)}
                                   className={`btn-pos-delete-item ${styles.deleteItemBtn}`}
@@ -1181,7 +1175,7 @@ export default function POSPage() {
                         <User size={15} color="var(--rose-600)" />
                         <span>العميل</span>
                       </span>
-                      <button 
+                      <button
                         onClick={() => setIsNewCustomerModalOpen(true)}
                         className="btn-pos-quick-add-customer"
                       >
@@ -1245,14 +1239,14 @@ export default function POSPage() {
                         <span>خصم الفاتورة</span>
                       </span>
                       <div className="pos-discount-chips-wrap">
-                        <button 
+                        <button
                           type="button"
                           onClick={() => setDiscountType("fixed")}
                           className={`pos-chip-toggle ${discountType === "fixed" ? "active" : ""}`}
                         >
                           ج.م
                         </button>
-                        <button 
+                        <button
                           type="button"
                           onClick={() => setDiscountType("percent")}
                           className={`pos-chip-toggle ${discountType === "percent" ? "active" : ""}`}
@@ -1261,7 +1255,7 @@ export default function POSPage() {
                         </button>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="number"
                       min="0"
                       placeholder="قيمة الخصم..."
@@ -1313,7 +1307,7 @@ export default function POSPage() {
                         </button>
                       )}
                     </div>
-                    <input 
+                    <input
                       type="number"
                       min="0"
                       step="any"
