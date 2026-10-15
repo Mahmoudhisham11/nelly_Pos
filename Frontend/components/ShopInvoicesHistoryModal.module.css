@@ -326,3 +326,35 @@
   height: 3.5rem;
   color: #94a3b8;
 }
+
+@media (max-width: 768px) {
+  .overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+  }
+
+  .modalContainer {
+    max-height: 92vh !important;
+    border-radius: 28px 28px 0 0 !important;
+    border-bottom: none !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25) !important;
+    animation: modalBottomSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .modalContainer::before {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 4.5px;
+    background: #dfcbda;
+    border-radius: 10px;
+    margin: 10px auto 4px auto;
+    flex-shrink: 0;
+  }
+}

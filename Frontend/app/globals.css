@@ -782,7 +782,7 @@ td.num-font, th.num-font {
     height: 100vh !important;
     width: 280px !important;
     max-width: 85vw !important;
-    z-index: 10000 !important;
+    z-index: 100000 !important;
     transform: translateX(100%) !important;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15) !important;
@@ -804,7 +804,7 @@ td.num-font, th.num-font {
     background: rgba(15, 23, 42, 0.45) !important;
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
-    z-index: 9999 !important;
+    z-index: 99990 !important;
   }
 
   .navbar-mobile-toggle {
@@ -860,16 +860,17 @@ td.num-font, th.num-font {
     white-space: nowrap !important;
   }
 
-  /* Swiper Horizontal Scroll on Mobile */
+  /* Mobile Cards Stack (Vertical Layout Under Each Other) */
   .mobile-cards-swiper {
     display: flex !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    gap: 10px !important;
-    padding: 4px 10px 12px !important;
-    margin: 0 -10px 10px !important;
-    scrollbar-width: none !important;
+    flex-direction: column !important;
+    overflow-x: visible !important;
+    scroll-snap-type: none !important;
+    -webkit-overflow-scrolling: auto !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    margin: 0 0 16px 0 !important;
+    width: 100% !important;
   }
 
   .mobile-cards-swiper::-webkit-scrollbar {
@@ -877,28 +878,15 @@ td.num-font, th.num-font {
   }
 
   .mobile-swiper-card {
-    min-width: 82vw !important;
-    max-width: 84vw !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
     flex-shrink: 0 !important;
-    scroll-snap-align: center !important;
+    scroll-snap-align: none !important;
   }
 
   .swiper-mobile-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-top: -4px;
-    margin-bottom: 12px;
-  }
-
-  .modal-content {
-    max-width: 96% !important;
-    padding: 16px 12px !important;
-    border-radius: 16px !important;
+    display: none !important;
   }
 }
 
@@ -981,24 +969,135 @@ td.num-font, th.num-font {
   transition: all 0.2s ease;
 }
 
-/* Mobile iOS Bottom Sheet Modal Conversion */
-@media (max-width: 768px) {
-  div[class*="backdrop"],
-  div[class*="Overlay"],
-  div[class*="modalOverlay"] {
+/* ==========================================================================
+   MOBILE LUXURY iOS BOTTOM SHEET MODALS & SLIDE-UP ANIMATIONS
+   Universal Bottom Sheet styling for every modal/popup in the application
+   ========================================================================== */
+@media (max-width: 820px) {
+  .modal-overlay,
+  .modal-backdrop,
+  div[class*="modalOverlay"],
+  div[class*="modal-overlay"],
+  div[class*="modalBackdrop"],
+  div[class*="modal-backdrop"],
+  div[class*="overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
+  div[class*="Overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
+  div[class*="backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
+  div[class*="Backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop) {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100% !important;
+    display: flex !important;
     align-items: flex-end !important;
+    justify-content: flex-end !important;
     padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    z-index: 99999 !important;
+    background: rgba(15, 7, 20, 0.62) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    animation: modalBackdropFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
 
+  /* Mobile Sidebar & Backdrop Protection */
+  .app-sidebar {
+    z-index: 100000 !important;
+    pointer-events: auto !important;
+  }
+
+  .sidebar-mobile-backdrop {
+    z-index: 99990 !important;
+    pointer-events: auto !important;
+    background: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+
+  .modal-content,
   div[class*="modalContainer"],
+  div[class*="modal-container"],
   div[class*="modalContent"],
+  div[class*="modal-content"],
+  div[class*="modalCard"],
   div[class*="modalBox"] {
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: 24px 24px 0 0 !important;
-    margin: 0 !important;
-    max-height: 88vh !important;
+    min-width: 100% !important;
+    border-radius: 28px 28px 0 0 !important;
     border-bottom: none !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    margin: 0 !important;
+    max-height: 92vh !important;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25) !important;
+    animation: modalBottomSheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+  }
+
+  /* Elegant pull handle indicator for bottom sheets */
+  .modal-content::before,
+  div[class*="modalContainer"]::before,
+  div[class*="modalContent"]::before {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 4.5px;
+    background: #dfcbda;
+    border-radius: 10px;
+    margin: 10px auto 4px auto;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes modalBottomSheetSlideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modalBottomSheetSlideDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes modalBackdropFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes modalBackdropFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

@@ -1,32 +1,58 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-import { subscribeToUsers, createUser, updateUser, deleteUserDoc, ROLE_OPTIONS, normalizeRole } from "@/lib/usersService";
+import {
+  subscribeToUsers,
+  createUser,
+  updateUser,
+  deleteUserDoc,
+  ROLE_OPTIONS,
+  normalizeRole,
+} from "@/lib/usersService";
 import { formatNumber } from "@/lib/utils";
 import {
   Settings,
   Users,
   ShieldAlert,
+  Shield,
   Trash2,
   Search,
   ArrowLeft,
   Crown,
   User,
+  UserCheck,
   Sparkles,
   Cloud,
   CloudDownload,
   RefreshCw,
   UserPlus,
-  X
+  X,
+  Check,
+  Calendar,
+  Mail,
+  Building,
+  Copy,
+  LayoutGrid,
+  Table as TableIcon,
+  Power,
+  Eye,
+  EyeOff,
+  AlertTriangle,
 } from "lucide-react";
 import { syncManager } from "@/lib/syncManager";
 import { cloudSession } from "@/lib/cloudSession";
-import { addMember, cloudErrorMessage, listMembers, removeMember, updateMember } from "@/lib/cloudAccount";
+import {
+  addMember,
+  cloudErrorMessage,
+  listMembers,
+  removeMember,
+  updateMember,
+} from "@/lib/cloudAccount";
 import BackupCard from "@/components/BackupCard";
 import styles from "./settings.module.css";
 
@@ -43,11 +69,42 @@ export default function SettingsPage() {
   const [updatingUserId, setUpdatingUserId] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", confirm: "", role: "cashier", branch: "" });
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+    role: "cashier",
+    branch: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [addUserError, setAddUserError] = useState("");
   const [savingNewUser, setSavingNewUser] = useState(false);
   const [isPullingCloud, setIsPullingCloud] = useState(false);
   const [cloud, setCloud] = useState(cloudSession.state);
+  const [viewMode, setViewMode] = useState("auto"); // "auto" | "cards" | "table"
+  const [activeStatIndex, setActiveStatIndex] = useState(0);
+  const statsSwiperRef = useRef(null);
+
+  const handleStatsScroll = () => {
+    if (!statsSwiperRef.current) return;
+    const el = statsSwiperRef.current;
+    const scrollLeft = Math.abs(el.scrollLeft);
+    const cardWidth = el.scrollWidth / 3;
+    const index = Math.round(scrollLeft / cardWidth);
+    setActiveStatIndex(Math.min(2, Math.max(0, index)));
+  };
+
+  const scrollToStatCard = (index) => {
+    if (!statsSwiperRef.current) return;
+    const el = statsSwiperRef.current;
+    const cards = el.querySelectorAll(`.${styles.statCard}`);
+    if (cards[index]) {
+      cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      setActiveStatIndex(index);
+    }
+  };
 
   useEffect(() => cloudSession.subscribe(setCloud), []);
 
@@ -65,7 +122,7 @@ export default function SettingsPage() {
     setIsPullingCloud(true);
     try {
       await syncManager.resyncAll();
-      showToast("تمت المزامنة الكاملة مع السحابة.");
+      showToast("تمت المزامنة الكاملة مع السحابة بنجاح.");
     } catch (err) {
       alert(err?.message || "حدث خطأ أثناء المزامنة.");
     } finally {
@@ -80,8 +137,7 @@ export default function SettingsPage() {
     }
   }, [user, authLoading, router]);
 
-  // Users: the shop's accounts in the cloud when this device is linked (they log in on any device),
-  // otherwise this device's local users.
+  // Users: the shop's accounts in the cloud when this device is linked, otherwise this device's local users.
   const cloudMode = cloud.status === "ready" && !!cloud.shopId;
   const [cloudMembersVersion, setCloudMembersVersion] = useState(0);
   const reloadMembers = () => setCloudMembersVersion((v) => v + 1);
@@ -101,19 +157,44 @@ export default function SettingsPage() {
     listMembers(cloud.shopId)
       .then((list) => {
         if (!alive) return;
-        setUsersList(list.map((m) => ({
-          id: m.uid, uid: m.uid, cloud: true, name: m.name, displayName: m.name || m.email, email: m.email,
-          role: normalizeRole(m.role || "admin"), isActive: m.active !== false, branch: m.branch || "", createdAt: null,
-        })));
+        setUsersList(
+          list.map((m) => ({
+            id: m.uid,
+            uid: m.uid,
+            cloud: true,
+            name: m.name,
+            displayName: m.name || m.email,
+            email: m.email,
+            role: normalizeRole(m.role || "admin"),
+            isActive: m.active !== false,
+            branch: m.branch || "",
+            createdAt: m.createdAt || null,
+          }))
+        );
         setLoadingUsers(false);
       })
-      .catch((e) => { if (alive) { setLoadingUsers(false); showToast(cloudErrorMessage(e)); } });
-    return () => { alive = false; };
+      .catch((e) => {
+        if (alive) {
+          setLoadingUsers(false);
+          showToast(cloudErrorMessage(e));
+        }
+      });
+    return () => {
+      alive = false;
+    };
   }, [user, isAdmin, cloudMode, cloud.shopId, cloudMembersVersion]);
 
-  const isMe = (u) => u.uid === user?.uid || (!!u.email && u.email === user?.email);
+  const isMe = (u) => {
+    if (!u || !user) return false;
+    const uid = u.uid || u.id;
+    const currentUid = user.uid || user.id;
+    return (
+      (uid && uid === currentUid) ||
+      (!!u.email && !!user.email && u.email.toLowerCase() === user.email.toLowerCase())
+    );
+  };
 
-  const userLabel = (u) => u.displayName || u.name || u.email;
+  const userLabel = (u) => u.displayName || u.name || u.email || "المستخدم";
 
   // Change a user's role (admin / manager / cashier)
   const handleChangeRole = async (targetUser, newRole) => {
@@ -121,16 +202,20 @@ export default function SettingsPage() {
       alert("لا يمكنك تغيير صلاحية حسابك الحالي بنفسك.");
       return;
     }
-    if (newRole === targetUser.role) return;
-    setUpdatingUserId(targetUser.uid);
+    const currentNormalized = normalizeRole(targetUser.role);
+    if (newRole === currentNormalized) return;
+
+    const targetId = targetUser.uid || targetUser.id;
+    setUpdatingUserId(targetId);
     try {
       if (targetUser.cloud) {
-        await updateMember(targetUser.uid, { role: newRole });
+        await updateMember(targetId, { role: newRole });
         reloadMembers();
       } else {
-        await updateUser(targetUser.uid, { role: newRole });
+        await updateUser(targetId, { role: newRole });
       }
-      const label = ROLE_OPTIONS.find((r) => r.value === newRole)?.label.split(" - ")[0] || newRole;
+      const label =
+        ROLE_OPTIONS.find((r) => r.value === newRole)?.label.split(" - ")[0] || newRole;
       showToast(`تم تغيير صلاحية "${userLabel(targetUser)}" إلى ${label}.`);
     } catch (err) {
       alert(targetUser.cloud ? cloudErrorMessage(err) : err.message);
@@ -145,15 +230,20 @@ export default function SettingsPage() {
       alert("لا يمكنك إيقاف حسابك الحالي.");
       return;
     }
-    setUpdatingUserId(targetUser.uid);
+    const targetId = targetUser.uid || targetUser.id;
+    setUpdatingUserId(targetId);
     try {
       if (targetUser.cloud) {
-        await updateMember(targetUser.uid, { active: !targetUser.isActive });
+        await updateMember(targetId, { active: !targetUser.isActive });
         reloadMembers();
       } else {
-        await updateUser(targetUser.uid, { isActive: !targetUser.isActive });
+        await updateUser(targetId, { isActive: !targetUser.isActive });
       }
-      showToast(targetUser.isActive ? `تم إيقاف حساب "${userLabel(targetUser)}".` : `تم تفعيل حساب "${userLabel(targetUser)}"، ويقدر يدخل دلوقتي.`);
+      showToast(
+        targetUser.isActive
+          ? `تم إيقاف حساب "${userLabel(targetUser)}".`
+          : `تم تفعيل حساب "${userLabel(targetUser)}"، ويمكنه الدخول الآن.`
+      );
     } catch (err) {
       alert(targetUser.cloud ? cloudErrorMessage(err) : err.message);
     } finally {
@@ -162,7 +252,16 @@ export default function SettingsPage() {
   };
 
   const openAddUser = () => {
-    setNewUser({ name: "", email: "", password: "", confirm: "", role: "cashier", branch: "" });
+    setNewUser({
+      name: "",
+      email: "",
+      password: "",
+      confirm: "",
+      role: "cashier",
+      branch: "",
+    });
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     setAddUserError("");
     setIsAddUserOpen(true);
   };
@@ -171,15 +270,22 @@ export default function SettingsPage() {
     e.preventDefault();
     setAddUserError("");
     const { name, email, password, confirm } = newUser;
-    if (!name.trim() || !email.trim() || !password.trim()) return setAddUserError("يرجى كتابة الاسم والبريد الإلكتروني وكلمة المرور.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setAddUserError("البريد الإلكتروني غير صحيح.");
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      return setAddUserError("يرجى كتابة الاسم والبريد الإلكتروني وكلمة المرور.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return setAddUserError("البريد الإلكتروني غير صحيح.");
+    }
     const minLen = cloudMode ? 6 : 4;
-    if (password.trim().length < minLen) return setAddUserError(`كلمة المرور يجب ألا تقل عن ${minLen} أحرف.`);
-    if (password.trim() !== confirm.trim()) return setAddUserError("كلمتا المرور غير متطابقتين.");
+    if (password.trim().length < minLen) {
+      return setAddUserError(`كلمة المرور يجب ألا تقل عن ${minLen} أحرف.`);
+    }
+    if (password.trim() !== confirm.trim()) {
+      return setAddUserError("كلمتا المرور غير متطابقتين.");
+    }
     setSavingNewUser(true);
     try {
       if (cloudMode) {
-        // a cloud account of THIS shop: it can log in on any device; also saved on this device for offline use
         await addMember(cloud.shopId, { ...newUser, password: password.trim() });
         await createUser(newUser).catch(() => {});
         reloadMembers();
@@ -204,18 +310,58 @@ export default function SettingsPage() {
       return;
     }
 
+    const targetId = userToDelete.uid || userToDelete.id;
     try {
       if (userToDelete.cloud) {
-        await removeMember(userToDelete.uid);
+        await removeMember(targetId);
         reloadMembers();
       } else {
-        await deleteUserDoc(userToDelete.uid);
+        await deleteUserDoc(targetId);
       }
-      showToast(`تم حذف المستخدم "${userToDelete.displayName || userToDelete.email}" من النظام.`);
+      showToast(
+        `تم حذف المستخدم "${userToDelete.displayName || userToDelete.email}" من النظام.`
+      );
     } catch (err) {
-      alert((userToDelete.cloud ? cloudErrorMessage(err) : err.message) || "حدث خطأ أثناء حذف المستخدم.");
+      alert(
+        (userToDelete.cloud ? cloudErrorMessage(err) : err.message) ||
+          "حدث خطأ أثناء حذف المستخدم."
+      );
     } finally {
       setUserToDelete(null);
+    }
+  };
+
+  // Copy email to clipboard
+  const handleCopyEmail = (email, e) => {
+    e?.stopPropagation?.();
+    if (!email || email === "—") return;
+    if (typeof navigator !== "undefined" && navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(email);
+      showToast(`تم نسخ البريد: ${email}`);
+    }
+  };
+
+  // Format date helper with robust parsing
+  const formatDate = (val) => {
+    if (!val) return "—";
+    try {
+      let d;
+      if (typeof val?.toDate === "function") {
+        d = val.toDate();
+      } else if (val?.seconds) {
+        d = new Date(val.seconds * 1000);
+      } else {
+        d = new Date(val);
+      }
+      if (isNaN(d.getTime())) return "—";
+      return d.toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        timeZone: "Africa/Cairo",
+      });
+    } catch {
+      return "—";
     }
   };
 
@@ -226,24 +372,65 @@ export default function SettingsPage() {
       const name = (u.displayName || u.name || "").toLowerCase();
       const email = (u.email || "").toLowerCase();
       const branch = (u.branch || "").toLowerCase();
-      const matchesQuery = !q || name.includes(q) || email.includes(q) || branch.includes(q);
+      const matchesQuery =
+        !q || name.includes(q) || email.includes(q) || branch.includes(q);
 
-      const matchesRole = selectedRoleFilter === "all"
-        || (selectedRoleFilter === "pending" ? !u.isActive : u.role === selectedRoleFilter);
+      const role = normalizeRole(u.role);
+      const matchesRole =
+        selectedRoleFilter === "all"
+          ? true
+          : selectedRoleFilter === "pending"
+          ? !u.isActive
+          : role === selectedRoleFilter;
 
       return matchesQuery && matchesRole;
     });
   }, [usersList, searchQuery, selectedRoleFilter]);
 
+  // Statistics counts
   const totalUsersCount = usersList.length;
-  const adminCount = usersList.filter(u => u.role === "admin").length;
-  const regularCount = usersList.filter(u => u.role !== "admin").length;
-  const pendingCount = usersList.filter(u => !u.isActive).length;
+  const adminCount = usersList.filter((u) => normalizeRole(u.role) === "admin").length;
+  const managerCount = usersList.filter((u) => normalizeRole(u.role) === "manager").length;
+  const cashierCount = usersList.filter((u) => normalizeRole(u.role) === "cashier").length;
+  const staffCount = managerCount + cashierCount;
+  const pendingCount = usersList.filter((u) => !u.isActive).length;
 
+  // Helper for role styling
+  const getRoleConfig = (roleStr) => {
+    const r = normalizeRole(roleStr);
+    if (r === "admin") {
+      return {
+        label: "مسؤول (Admin)",
+        shortLabel: "مسؤول",
+        avatarClass: styles.userAvatarAdmin,
+        tagClass: styles.roleTagAdmin,
+        icon: Crown,
+      };
+    }
+    if (r === "manager") {
+      return {
+        label: "مدير (Manager)",
+        shortLabel: "مدير",
+        avatarClass: styles.userAvatarManager,
+        tagClass: styles.roleTagManager,
+        icon: Shield,
+      };
+    }
+    return {
+      label: "كاشير (Cashier)",
+      shortLabel: "كاشير",
+      avatarClass: styles.userAvatarCashier,
+      tagClass: styles.roleTagCashier,
+      icon: User,
+    };
+  };
+
+  // If auth is loading
   if (authLoading) {
     return (
       <div className={styles.authLoadingWrapper}>
-        <p className={styles.authLoadingText}>جاري التحقق من الصلاحيات...</p>
+        <RefreshCw size={36} className={`${styles.spin}`} color="#db2777" />
+        <p className={styles.authLoadingText}>جاري التحقق من الصلاحيات والوصول...</p>
       </div>
     );
   }
@@ -257,9 +444,7 @@ export default function SettingsPage() {
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
         <div className="main-content">
-          <Navbar
-            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-          />
+          <Navbar onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)} />
           <main className={`page-wrapper ${styles.permissionDeniedWrapper}`}>
             <div className={`glass-panel ${styles.permissionDeniedCard}`}>
               <div className={styles.permissionDeniedIcon}>
@@ -271,14 +456,16 @@ export default function SettingsPage() {
               </h2>
 
               <p className={styles.permissionDeniedDesc}>
-                عذراً، صفحة إعدادات التطبيق وإدارة حسابات وصلاحيات المستخدمين مخصصة ومحمية حصرياً لـ <strong className={styles.permissionDeniedHighlight}>مسؤول المخزن (Admin)</strong>.
+                عذراً، صفحة إعدادات التطبيق وإدارة حسابات وصلاحيات المستخدمين مخصصة ومحمية حصرياً لـ{" "}
+                <strong className={styles.permissionDeniedHighlight}>
+                  مسؤول المخزن (Admin)
+                </strong>
+                .
               </p>
 
               <div className={styles.permissionDeniedRoleBox}>
                 <span className={styles.roleBoxLabel}>رتبة حسابك الحالية:</span>
-                <span className={styles.roleBoxBadge}>
-                  👤 مستخدم عادي (User)
-                </span>
+                <span className={styles.roleBoxBadge}>👤 مستخدم عادي</span>
               </div>
 
               <div className={styles.permissionDeniedActions}>
@@ -303,12 +490,10 @@ export default function SettingsPage() {
       />
 
       <div className="main-content">
-        <Navbar
-          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-        />
+        <Navbar onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)} />
 
         <main className="page-wrapper">
-          {/* Toast Alert */}
+          {/* Toast Notification */}
           {toastMessage && (
             <div className={styles.toastWrapper}>
               <Sparkles size={18} color="#f472b6" />
@@ -326,68 +511,123 @@ export default function SettingsPage() {
                 <h2 className={styles.headerTitle}>إعدادات النظام وإدارة المستخدمين</h2>
               </div>
               <p className={styles.headerSubtitle}>
-                التحكم في حسابات المستخدمين، تعديل الرتب والصلاحيات (Admin / User)، وإدارة الأذونات
+                التحكم الكامل في حسابات الموظفين، تعديل الصلاحيات والرتب، وإدارة الربط السحابي وقاعدة البيانات
               </p>
             </div>
           </div>
 
+          {/* Database Backup Card for Admin */}
           {isAdmin && <BackupCard />}
 
-          {/* Stats Cards (Swiper on Mobile, Grid on Desktop) */}
-          <section className="mobile-cards-swiper">
-            <div className="mobile-swiper-card">
-              <div className={`glass-card ${styles.statCardUsers}`}>
-                <div className={styles.statInner}>
-                  <div>
-                    <div className={styles.statLabel}>إجمالي المستخدمين المسجلين</div>
-                    <div className={`num-font ${styles.statValue}`} dir="ltr">
-                      {formatNumber(totalUsersCount)}
-                    </div>
-                  </div>
-                  <div className={styles.iconUsers}>
-                    <Users size={22} />
+          {/* Statistics Grid / Mobile Swiper */}
+          <div className={styles.statsSwiperWrapper}>
+            <section
+              className={styles.statsGrid}
+              ref={statsSwiperRef}
+              onScroll={handleStatsScroll}
+            >
+              {/* Card 1: Total Users */}
+              <div className={`${styles.statCard} ${styles.statCardUsers}`}>
+                <div
+                  className={styles.statIconBox}
+                  style={{ background: "#fdf2f8", color: "#db2777" }}
+                >
+                  <Users size={22} />
+                </div>
+                <div className={styles.statContent}>
+                  <span className={styles.statLabel}>إجمالي المستخدمين</span>
+                  <div className={`num-font ${styles.statValue}`} dir="ltr">
+                    {formatNumber(totalUsersCount)}
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mobile-swiper-card">
-              <div className={`glass-card ${styles.statCardAdmins}`}>
-                <div className={styles.statInner}>
-                  <div>
-                    <div className={styles.statLabel}>مسؤولو المخزن (Admins)</div>
-                    <div className={`num-font ${styles.statValueAdmins}`} dir="ltr">
-                      {formatNumber(adminCount)}
-                    </div>
-                  </div>
-                  <div className={styles.iconAdmins}>
-                    <Crown size={22} />
+              {/* Card 2: Admins */}
+              <div className={`${styles.statCard} ${styles.statCardAdmins}`}>
+                <div
+                  className={styles.statIconBox}
+                  style={{ background: "#fffbeb", color: "#d97706" }}
+                >
+                  <Crown size={22} />
+                </div>
+                <div className={styles.statContent}>
+                  <span className={styles.statLabel}>مسؤولو المخزن (Admins)</span>
+                  <div
+                    className={`num-font ${styles.statValue} ${styles.statValueAdmins}`}
+                    dir="ltr"
+                  >
+                    {formatNumber(adminCount)}
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mobile-swiper-card">
-              <div className={`glass-card ${styles.statCardRegular}`}>
-                <div className={styles.statInner}>
-                  <div>
-                    <div className={styles.statLabel}>المستخدمون العاديون (Users)</div>
-                    <div className={`num-font ${styles.statValueRegular}`} dir="ltr">
-                      {formatNumber(regularCount)}
-                    </div>
-                  </div>
-                  <div className={styles.iconRegular}>
-                    <User size={22} />
+              {/* Card 3: Staff & Cashiers */}
+              <div className={`${styles.statCard} ${styles.statCardRegular}`}>
+                <div
+                  className={styles.statIconBox}
+                  style={{ background: "#faf5ff", color: "#7e22ce" }}
+                >
+                  <UserCheck size={22} />
+                </div>
+                <div className={styles.statContent}>
+                  <span className={styles.statLabel}>فريق العمل (مديرين وكاشير)</span>
+                  <div
+                    className={`num-font ${styles.statValue} ${styles.statValueRegular}`}
+                    dir="ltr"
+                  >
+                    {formatNumber(staffCount)}
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Mobile Swipe Hint */}
-          <div className="swiper-mobile-hint">
-            <span>👈 اسحب لمشاهدة باقي الإحصائيات 👉</span>
+            {/* Mobile Swiper Pagination Dots */}
+            <div className={styles.swiperDots}>
+              <button
+                type="button"
+                onClick={() => scrollToStatCard(0)}
+                className={`${styles.swiperDot} ${
+                  activeStatIndex === 0 ? styles.swiperDotActive : ""
+                }`}
+                title="إجمالي المستخدمين"
+              />
+              <button
+                type="button"
+                onClick={() => scrollToStatCard(1)}
+                className={`${styles.swiperDot} ${
+                  activeStatIndex === 1 ? styles.swiperDotActive : ""
+                }`}
+                title="مسؤولو المخزن"
+              />
+              <button
+                type="button"
+                onClick={() => scrollToStatCard(2)}
+                className={`${styles.swiperDot} ${
+                  activeStatIndex === 2 ? styles.swiperDotActive : ""
+                }`}
+                title="فريق العمل"
+              />
+            </div>
           </div>
+
+          {/* Pending Users Notification Banner */}
+          {pendingCount > 0 && (
+            <div className={styles.pendingAlertBanner}>
+              <div className={styles.pendingAlertContent}>
+                <span className={styles.pendingAlertDot}></span>
+                <span>
+                  يوجد <strong className="num-font">{pendingCount}</strong> مستخدم في انتظار التفعيل والموافقة للعمل على النظام.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRoleFilter("pending")}
+                className={styles.pendingAlertBtn}
+              >
+                عرض المستخدمين المعلقين
+              </button>
+            </div>
+          )}
 
           {/* Cloud Sync Section */}
           <section className={styles.cloudSyncCard}>
@@ -397,7 +637,12 @@ export default function SettingsPage() {
                   <Cloud size={24} />
                 </div>
                 <div>
-                  <h3 className={styles.cloudTitle}>الربط السحابي ومزامنة قاعدة البيانات (Firebase Cloud)</h3>
+                  <div className={styles.cloudTitleRow}>
+                    <h3 className={styles.cloudTitle}>
+                      الربط السحابي ومزامنة قاعدة البيانات
+                    </h3>
+                    <span className={styles.cloudTechBadge}>Firebase Cloud</span>
+                  </div>
                   <p className={styles.cloudSubtitle}>
                     سحب وتحديث كافة بيانات المتجر من السحابة وتخزينها محلياً للعمل بكفاءة تامة بدون إنترنت
                   </p>
@@ -405,19 +650,34 @@ export default function SettingsPage() {
               </div>
 
               <div className={styles.cloudSyncActionGroup}>
-                <div className={styles.cloudBadge}>
-                  <span className={styles.cloudDot} style={cloud.status === "ready" ? undefined : { background: "#f59e0b", boxShadow: "none" }}></span>
-                  <span>
-                    {cloud.status === "ready"
-                      ? `متصل: ${cloud.shopName || cloud.shopId} (${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || ""})`
-                      : "غير مربوط بالسحابة"}
-                  </span>
+                <div
+                  className={`${styles.cloudBadge} ${
+                    cloud.status !== "ready" ? styles.cloudBadgeOffline : ""
+                  }`}
+                >
+                  <span
+                    className={`${styles.cloudDot} ${
+                      cloud.status !== "ready" ? styles.cloudDotOffline : ""
+                    }`}
+                  ></span>
+                  <div className={styles.cloudBadgeText}>
+                    {cloud.status === "ready" ? (
+                      <>
+                        <span>متصل بالسحابة:</span>
+                        <span className={styles.cloudBadgeShop}>
+                          {cloud.shopName || cloud.shopId}
+                        </span>
+                      </>
+                    ) : (
+                      <span>غير مربوط بالسحابة</span>
+                    )}
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handlePullFromCloud}
-                  disabled={isPullingCloud}
+                  disabled={isPullingCloud || cloud.status !== "ready"}
                   className={styles.cloudSyncBtn}
                 >
                   {isPullingCloud ? (
@@ -428,217 +688,766 @@ export default function SettingsPage() {
                   ) : (
                     <>
                       <CloudDownload size={18} />
-                      <span>مزامنة كاملة مع السحابة الآن</span>
+                      <span>مزامنة كاملة الآن</span>
                     </>
                   )}
                 </button>
               </div>
             </div>
-
           </section>
 
           {/* Users Management Panel */}
-          <section className={`glass-panel ${styles.panel}`}>
-            {/* Toolbar */}
+          <section className={styles.panel}>
+            {/* Panel Header */}
+            <div className={styles.panelHeader}>
+              <div className={styles.panelTitleWrapper}>
+                <div className={styles.panelIconBox}>
+                  <Users size={20} />
+                </div>
+                <div>
+                  <h3 className={styles.panelTitle}>حسابات وصلاحيات المستخدمين</h3>
+                  <span className={styles.panelSubtitle}>
+                    إجمالي المستخدمين: <strong className="num-font">{totalUsersCount}</strong> مستخدم مسجل
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.panelHeaderActions}>
+                {/* View Mode Switcher */}
+                <div className={styles.viewModeToggle}>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("cards")}
+                    className={`${styles.viewModeBtn} ${
+                      viewMode === "cards" ? styles.viewModeBtnActive : ""
+                    }`}
+                    title="عرض كبطاقات"
+                  >
+                    <LayoutGrid size={15} />
+                    <span className={styles.viewModeText}>بطاقات</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("table")}
+                    className={`${styles.viewModeBtn} ${
+                      viewMode === "table" ? styles.viewModeBtnActive : ""
+                    }`}
+                    title="عرض كجدول"
+                  >
+                    <TableIcon size={15} />
+                    <span className={styles.viewModeText}>جدول</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={openAddUser}
+                  className={`btn-primary ${styles.addUserBtn}`}
+                >
+                  <UserPlus size={16} />
+                  <span>إضافة مستخدم جديد</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Toolbar: Search + Filter Chips */}
             <div className={styles.toolbar}>
               <div className={styles.searchWrapper}>
                 <input
                   type="text"
-                  className={`form-input ${styles.searchInput}`}
-                  placeholder="بحث بالاسم أو البريد الإلكتروني..."
+                  className={styles.searchInput}
+                  placeholder="بحث بالاسم، البريد الإلكتروني أو الفرع..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <Search size={18} color="#db2777" className={styles.searchIcon} />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className={styles.clearSearchBtn}
+                    title="مسح البحث"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
 
-              {/* Role Filter Buttons */}
-              <div className={styles.filterGroup}>
-                <button
-                  onClick={() => setSelectedRoleFilter("all")}
-                  className={`${selectedRoleFilter === "all" ? "btn-primary" : "btn-secondary"} ${styles.filterBtn}`}
-                >
-                  الكل ({totalUsersCount})
-                </button>
-                <button
-                  onClick={() => setSelectedRoleFilter("admin")}
-                  className={`${selectedRoleFilter === "admin" ? "btn-primary" : "btn-secondary"} ${styles.filterBtn}`}
-                >
-                  المسؤولون ({adminCount})
-                </button>
-                <button
-                  onClick={() => setSelectedRoleFilter("manager")}
-                  className={`${selectedRoleFilter === "manager" ? "btn-primary" : "btn-secondary"} ${styles.filterBtn}`}
-                >
-                  المديرين
-                </button>
-                <button
-                  onClick={() => setSelectedRoleFilter("cashier")}
-                  className={`${selectedRoleFilter === "cashier" ? "btn-primary" : "btn-secondary"} ${styles.filterBtn}`}
-                >
-                  الكاشير
-                </button>
-                <button
-                  onClick={() => setSelectedRoleFilter("pending")}
-                  className={`${selectedRoleFilter === "pending" ? "btn-primary" : "btn-secondary"} ${styles.filterBtn}`}
-                >
-                  في انتظار التفعيل ({pendingCount})
-                </button>
-                <button onClick={openAddUser} className={`btn-primary ${styles.filterBtn}`}>
-                  <UserPlus size={15} /> إضافة مستخدم جديد
-                </button>
+              {/* Filter Chips Scroll Container */}
+              <div className={styles.filterChipsContainer}>
+                <div className={styles.filterGroup}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoleFilter("all")}
+                    className={`${styles.filterChip} ${
+                      selectedRoleFilter === "all" ? styles.filterChipActive : ""
+                    }`}
+                  >
+                    <span>الكل</span>
+                    <span className={`num-font ${styles.chipCounter}`}>
+                      {totalUsersCount}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoleFilter("admin")}
+                    className={`${styles.filterChip} ${
+                      selectedRoleFilter === "admin" ? styles.filterChipActive : ""
+                    }`}
+                  >
+                    <Crown size={13} />
+                    <span>المسؤولون</span>
+                    <span className={`num-font ${styles.chipCounter}`}>
+                      {adminCount}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoleFilter("manager")}
+                    className={`${styles.filterChip} ${
+                      selectedRoleFilter === "manager" ? styles.filterChipActive : ""
+                    }`}
+                  >
+                    <Shield size={13} />
+                    <span>المديرين</span>
+                    <span className={`num-font ${styles.chipCounter}`}>
+                      {managerCount}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoleFilter("cashier")}
+                    className={`${styles.filterChip} ${
+                      selectedRoleFilter === "cashier" ? styles.filterChipActive : ""
+                    }`}
+                  >
+                    <User size={13} />
+                    <span>الكاشير</span>
+                    <span className={`num-font ${styles.chipCounter}`}>
+                      {cashierCount}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoleFilter("pending")}
+                    className={`${styles.filterChip} ${
+                      selectedRoleFilter === "pending"
+                        ? styles.filterChipActiveAlert
+                        : ""
+                    }`}
+                  >
+                    {pendingCount > 0 && <span className={styles.chipAlertDot}></span>}
+                    <span>في انتظار التفعيل</span>
+                    <span className={`num-font ${styles.chipCounter}`}>
+                      {pendingCount}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Users Table */}
-            <div className="table-container">
-              {loadingUsers ? (
-                <div className={styles.loadingOrEmptyBox}>
-                  <p className={styles.loadingOrEmptyText}>جاري تحميل قائمة المستخدمين من Firestore...</p>
+            {/* Users Content: Loading, Empty, or Data Views */}
+            {loadingUsers ? (
+              <div className={styles.loadingOrEmptyBox}>
+                <RefreshCw size={32} className={styles.spin} color="#db2777" />
+                <p className={styles.loadingOrEmptyText}>
+                  جاري تحميل قائمة المستخدمين من قاعدة البيانات...
+                </p>
+              </div>
+            ) : filteredUsers.length === 0 ? (
+              <div className={styles.loadingOrEmptyBox}>
+                <div className={styles.emptyStateIcon}>
+                  <Search size={26} />
                 </div>
-              ) : filteredUsers.length === 0 ? (
-                <div className={styles.loadingOrEmptyBox}>
-                  <p className={styles.loadingOrEmptyText}>لا يوجد أي مستخدم مطابق لخيارات البحث</p>
-                </div>
-              ) : (
-                <table className="custom-table">
-                  <thead>
-                    <tr>
-                      <th>اسم المستخدم</th>
-                      <th>البريد الإلكتروني</th>
-                      <th>المحل / الفرع</th>
-                      <th>الصلاحية</th>
-                      <th className={styles.centerTh}>الحالة</th>
-                      <th>تاريخ التسجيل</th>
-                      <th className={styles.centerTh}>حذف الحساب</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map((u) => {
-                      const isCurrentUser = isMe(u);
-                      const isTargetAdmin = u.role === "admin";
-                      const isUpdating = updatingUserId === u.uid;
+                <p className={styles.loadingOrEmptyText}>
+                  لا يوجد أي مستخدم مطابق لخيارات البحث المحددة
+                </p>
+                {(searchQuery || selectedRoleFilter !== "all") && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedRoleFilter("all");
+                    }}
+                    className={styles.clearFilterBtn}
+                  >
+                    إعادة ضبط التصفية
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div
+                className={`${
+                  viewMode === "table"
+                    ? styles.forceShowTable
+                    : viewMode === "cards"
+                    ? styles.forceShowCards
+                    : ""
+                }`}
+              >
+                {/* 1. Desktop / Tablet Data Table */}
+                <div className={styles.desktopTableContainer}>
+                  <div className={styles.tableWrapper}>
+                    <table className={styles.usersTable}>
+                      <thead>
+                        <tr>
+                          <th>اسم المستخدم</th>
+                          <th>البريد الإلكتروني</th>
+                          <th>المحل / الفرع</th>
+                          <th>الصلاحية والرتبة</th>
+                          <th className={styles.centerTh}>حالة الحساب</th>
+                          <th>تاريخ التسجيل</th>
+                          <th className={styles.centerTh}>حذف</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredUsers.map((u) => {
+                          const isCurrentUser = isMe(u);
+                          const targetId = u.uid || u.id;
+                          const isUpdating = updatingUserId === targetId;
+                          const roleCfg = getRoleConfig(u.role);
+                          const initial = (
+                            u.displayName ||
+                            u.name ||
+                            u.email ||
+                            "U"
+                          )
+                            .trim()[0]
+                            ?.toUpperCase() || "U";
 
-                      return (
-                        <tr key={u.uid || u.id}>
-                          {/* User info */}
-                          <td>
-                            <div className={styles.userAvatarWrapper}>
-                              <div className={isTargetAdmin ? styles.userAvatarAdmin : styles.userAvatarRegular}>
-                                {(u.displayName || u.name || "U")[0].toUpperCase()}
-                              </div>
-                              <div>
-                                <div className={styles.userNameText}>
-                                  {u.displayName || u.name || "مستخدم مخزن"}
-                                  {isCurrentUser && (
-                                    <span className={styles.currentUserBadge}>
-                                      أنت (الحساب الحالي)
-                                    </span>
+                          return (
+                            <tr key={targetId}>
+                              {/* User Info */}
+                              <td>
+                                <div className={styles.userAvatarWrapper}>
+                                  <div
+                                    className={`${styles.userAvatar} ${roleCfg.avatarClass}`}
+                                  >
+                                    {initial}
+                                  </div>
+                                  <div>
+                                    <div className={styles.userNameText}>
+                                      <span>
+                                        {u.displayName || u.name || "مستخدم مخزن"}
+                                      </span>
+                                      {isCurrentUser && (
+                                        <span className={styles.currentUserBadge}>
+                                          أنت (الحساب الحالي)
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Email */}
+                              <td>
+                                <div
+                                  className={styles.emailWrapper}
+                                  onClick={(e) => handleCopyEmail(u.email, e)}
+                                  title="انقر لنسخ البريد الإلكتروني"
+                                >
+                                  <span
+                                    className={`num-font ${styles.emailText}`}
+                                    dir="ltr"
+                                  >
+                                    {u.email || "—"}
+                                  </span>
+                                  {u.email && (
+                                    <Copy size={13} className={styles.copyIcon} />
                                   )}
                                 </div>
+                              </td>
+
+                              {/* Branch */}
+                              <td>
+                                {u.branch ? (
+                                  <span className={styles.branchBadge}>
+                                    <Building size={12} />
+                                    <span>{u.branch}</span>
+                                  </span>
+                                ) : (
+                                  <span style={{ color: "var(--text-muted)" }}>—</span>
+                                )}
+                              </td>
+
+                              {/* Role Selector */}
+                              <td>
+                                <select
+                                  className={styles.roleSelect}
+                                  value={normalizeRole(u.role)}
+                                  disabled={isCurrentUser || isUpdating}
+                                  onChange={(e) =>
+                                    handleChangeRole(u, e.target.value)
+                                  }
+                                  title={
+                                    isCurrentUser
+                                      ? "لا يمكنك تغيير صلاحية حسابك الحالي"
+                                      : "تعديل الصلاحية"
+                                  }
+                                >
+                                  {ROLE_OPTIONS.map((r) => (
+                                    <option key={r.value} value={r.value}>
+                                      {r.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+
+                              {/* Account Status */}
+                              <td className={styles.centerTd}>
+                                <div className={styles.statusBadgeGroup}>
+                                  <span
+                                    className={`${styles.statusPill} ${
+                                      u.isActive
+                                        ? styles.statusPillActive
+                                        : styles.statusPillInactive
+                                    }`}
+                                  >
+                                    <span className={styles.statusDot} />
+                                    <span>{u.isActive ? "نشط" : "معلّق"}</span>
+                                  </span>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleActive(u)}
+                                    disabled={isCurrentUser || isUpdating}
+                                    className={`${styles.toggleStatusBtn} ${
+                                      u.isActive
+                                        ? styles.toggleStatusBtnActive
+                                        : styles.toggleStatusBtnInactive
+                                    } ${isCurrentUser ? styles.btnDisabled : ""}`}
+                                    title={
+                                      isCurrentUser
+                                        ? "لا يمكنك إيقاف حسابك الحالي"
+                                        : u.isActive
+                                        ? "إيقاف الحساب"
+                                        : "تفعيل الحساب"
+                                    }
+                                  >
+                                    {isUpdating ? (
+                                      <>
+                                        <RefreshCw
+                                          size={12}
+                                          className={styles.spin}
+                                        />
+                                        <span>جاري...</span>
+                                      </>
+                                    ) : u.isActive ? (
+                                      <>
+                                        <Power size={12} />
+                                        <span>إيقاف</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Check size={12} />
+                                        <span>تفعيل</span>
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </td>
+
+                              {/* Registration Date */}
+                              <td>
+                                <span className={styles.dateText}>
+                                  {formatDate(u.createdAt)}
+                                </span>
+                              </td>
+
+                              {/* Delete Action */}
+                              <td className={styles.centerTd}>
+                                <button
+                                  type="button"
+                                  onClick={() => setUserToDelete(u)}
+                                  disabled={isCurrentUser}
+                                  className={`${styles.deleteActionBtn} ${
+                                    isCurrentUser ? styles.btnDisabled : ""
+                                  }`}
+                                  title={
+                                    isCurrentUser
+                                      ? "لا يمكنك حذف حسابك الحالي"
+                                      : "حذف حساب المستخدم"
+                                  }
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 2. Mobile User Cards View (Zero Horizontal Overflow) */}
+                <div className={styles.mobileCardsGrid}>
+                  {filteredUsers.map((u) => {
+                    const isCurrentUser = isMe(u);
+                    const targetId = u.uid || u.id;
+                    const isUpdating = updatingUserId === targetId;
+                    const roleCfg = getRoleConfig(u.role);
+                    const initial = (
+                      u.displayName ||
+                      u.name ||
+                      u.email ||
+                      "U"
+                    )
+                      .trim()[0]
+                      ?.toUpperCase() || "U";
+
+                    return (
+                      <div key={targetId} className={styles.mobileUserCard}>
+                        {/* Top Header of Card */}
+                        <div className={styles.mobileCardHeader}>
+                          <div className={styles.mobileCardUserSection}>
+                            <div
+                              className={`${styles.userAvatar} ${roleCfg.avatarClass}`}
+                            >
+                              {initial}
+                            </div>
+                            <div className={styles.mobileCardUserNameGroup}>
+                              <div className={styles.mobileCardUserName}>
+                                <span>
+                                  {u.displayName || u.name || "مستخدم مخزن"}
+                                </span>
+                                {isCurrentUser && (
+                                  <span className={styles.currentUserBadge}>
+                                    أنت
+                                  </span>
+                                )}
                               </div>
                             </div>
-                          </td>
+                          </div>
 
-                          {/* Email */}
-                          <td>
-                            <span className={`num-font ${styles.emailText}`} dir="ltr">
+                          <div className={styles.mobileCardBadges}>
+                            <span
+                              className={`${styles.roleTag} ${roleCfg.tagClass}`}
+                            >
+                              {roleCfg.shortLabel}
+                            </span>
+                            <span
+                              className={`${styles.statusPill} ${
+                                u.isActive
+                                  ? styles.statusPillActive
+                                  : styles.statusPillInactive
+                              }`}
+                            >
+                              <span className={styles.statusDot} />
+                              <span>{u.isActive ? "نشط" : "معلّق"}</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Details Info */}
+                        <div className={styles.mobileCardDetails}>
+                          <div
+                            className={styles.mobileDetailItem}
+                            onClick={(e) => handleCopyEmail(u.email, e)}
+                          >
+                            <Mail
+                              size={14}
+                              className={styles.mobileDetailItemIcon}
+                            />
+                            <span
+                              className={`num-font ${styles.mobileDetailText}`}
+                              dir="ltr"
+                            >
                               {u.email || "—"}
                             </span>
-                          </td>
+                            {u.email && (
+                              <Copy size={12} className={styles.copyIcon} />
+                            )}
+                          </div>
 
-                          {/* Branch */}
-                          <td>{u.branch || "—"}</td>
+                          {u.branch && (
+                            <div className={styles.mobileDetailItem}>
+                              <Building
+                                size={14}
+                                className={styles.mobileDetailItemIcon}
+                              />
+                              <span className={styles.mobileDetailText}>
+                                {u.branch}
+                              </span>
+                            </div>
+                          )}
 
-                          {/* Role */}
-                          <td>
+                          <div className={styles.mobileDetailItem}>
+                            <Calendar
+                              size={14}
+                              className={styles.mobileDetailItemIcon}
+                            />
+                            <span className={styles.mobileDetailText}>
+                              التسجيل: {formatDate(u.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Actions Row */}
+                        <div className={styles.mobileCardActions}>
+                          <div className={styles.mobileRoleSelectWrapper}>
                             <select
-                              className="form-input"
-                              value={u.role}
+                              className={styles.mobileRoleSelect}
+                              value={normalizeRole(u.role)}
                               disabled={isCurrentUser || isUpdating}
-                              onChange={(e) => handleChangeRole(u, e.target.value)}
-                              title={isCurrentUser ? "لا يمكنك تغيير صلاحية حسابك الحالي" : "تغيير الصلاحية"}
-                              style={{ minWidth: 170 }}
+                              onChange={(e) =>
+                                handleChangeRole(u, e.target.value)
+                              }
+                              title={
+                                isCurrentUser
+                                  ? "لا يمكنك تغيير صلاحية حسابك الحالي"
+                                  : "تعديل الصلاحية"
+                              }
                             >
                               {ROLE_OPTIONS.map((r) => (
-                                <option key={r.value} value={r.value}>{r.label}</option>
+                                <option key={r.value} value={r.value}>
+                                  {r.label}
+                                </option>
                               ))}
                             </select>
-                          </td>
+                          </div>
 
-                          {/* Status: approve a pending sign-up / stop an account */}
-                          <td className={styles.centerTd}>
-                            <button
-                              onClick={() => handleToggleActive(u)}
-                              disabled={isCurrentUser || isUpdating}
-                              className={`${u.isActive ? "btn-secondary" : "btn-primary"} ${styles.roleActionBtn} ${isCurrentUser ? styles.btnDisabled : styles.btnEnabled}`}
-                              title={u.isActive ? "إيقاف الحساب" : "تفعيل الحساب"}
-                            >
-                              {isUpdating ? "جاري الحفظ..." : u.isActive ? "✅ مفعّل (إيقاف)" : "⏳ تفعيل الحساب"}
-                            </button>
-                          </td>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleActive(u)}
+                            disabled={isCurrentUser || isUpdating}
+                            className={`${styles.mobileToggleBtn} ${
+                              u.isActive
+                                ? styles.mobileToggleBtnActive
+                                : styles.mobileToggleBtnInactive
+                            } ${isCurrentUser ? styles.btnDisabled : ""}`}
+                          >
+                            {isUpdating ? (
+                              <>
+                                <RefreshCw size={13} className={styles.spin} />
+                                <span>حفظ...</span>
+                              </>
+                            ) : u.isActive ? (
+                              <>
+                                <Power size={13} />
+                                <span>إيقاف</span>
+                              </>
+                            ) : (
+                              <>
+                                <Check size={13} />
+                                <span>تفعيل الحساب</span>
+                              </>
+                            )}
+                          </button>
 
-                          {/* Date */}
-                          <td>
-                            <span className={styles.dateText}>
-                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString("ar-EG", { timeZone: "Africa/Cairo" }) : "—"}
-                            </span>
-                          </td>
-
-                          {/* Delete User Action */}
-                          <td className={styles.centerTd}>
-                            <button
-                              onClick={() => setUserToDelete(u)}
-                              disabled={isCurrentUser}
-                              className={`btn-danger ${styles.deleteActionBtn} ${isCurrentUser ? styles.btnDisabled : styles.btnEnabled}`}
-                              title={isCurrentUser ? "لا يمكنك حذف حسابك الحالي" : "حذف المستخدم"}
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
+                          <button
+                            type="button"
+                            onClick={() => setUserToDelete(u)}
+                            disabled={isCurrentUser}
+                            className={`${styles.mobileDeleteBtn} ${
+                              isCurrentUser ? styles.btnDisabled : ""
+                            }`}
+                            title={
+                              isCurrentUser
+                                ? "لا يمكنك حذف حسابك الحالي"
+                                : "حذف الحساب"
+                            }
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </section>
         </main>
 
         {/* Add User Modal */}
         {isAddUserOpen && (
           <div className="modal-overlay" onClick={() => setIsAddUserOpen(false)}>
-            <div className={`modal-content ${styles.modalCard}`} onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460, textAlign: "right" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <h3 className={styles.deleteModalTitle} style={{ margin: 0 }}>إضافة مستخدم جديد</h3>
-                <button type="button" onClick={() => setIsAddUserOpen(false)} className="btn-secondary" style={{ padding: 6 }}><X size={16} /></button>
+            <div
+              className={`modal-content ${styles.modalCard}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <div className={styles.modalHeaderTitleGroup}>
+                  <div className={styles.modalHeaderIcon}>
+                    <UserPlus size={20} />
+                  </div>
+                  <div>
+                    <h3 className={styles.modalTitle}>إضافة مستخدم جديد</h3>
+                    <span
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "var(--text-muted)",
+                        fontWeight: 600,
+                      }}
+                    >
+                      إنشاء حساب موظف وتحديد صلاحيات الوصول
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddUserOpen(false)}
+                  className={styles.modalCloseBtn}
+                  title="إغلاق"
+                >
+                  <X size={16} />
+                </button>
               </div>
-              <form onSubmit={handleCreateUser} style={{ display: "grid", gap: 10 }}>
-                <label className="form-label">الاسم *
-                  <input className="form-input" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} maxLength={150} required />
-                </label>
-                <label className="form-label">البريد الإلكتروني *
-                  <input className="form-input" type="email" dir="ltr" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} required />
-                </label>
-                <label className="form-label">كلمة المرور *
-                  <input className="form-input" type="password" dir="ltr" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} required />
-                </label>
-                <label className="form-label">تأكيد كلمة المرور *
-                  <input className="form-input" type="password" dir="ltr" value={newUser.confirm} onChange={(e) => setNewUser({ ...newUser, confirm: e.target.value })} required />
-                </label>
-                <label className="form-label">المحل / الفرع
-                  <input className="form-input" value={newUser.branch} onChange={(e) => setNewUser({ ...newUser, branch: e.target.value })} maxLength={150} placeholder="مثال: الفرع الرئيسي" />
-                </label>
-                <label className="form-label">الصلاحية *
-                  <select className="form-input" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
-                    {ROLE_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+
+              <form onSubmit={handleCreateUser} className={styles.addUserForm}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>الاسم بالكامل *</label>
+                  <input
+                    className="form-input"
+                    value={newUser.name}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, name: e.target.value })
+                    }
+                    placeholder="مثال: أحمد محمد"
+                    maxLength={150}
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>البريد الإلكتروني *</label>
+                  <input
+                    className="form-input"
+                    type="email"
+                    dir="ltr"
+                    value={newUser.email}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
+                    placeholder="example@shop.com"
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>كلمة المرور *</label>
+                  <div className={styles.passwordInputWrapper}>
+                    <input
+                      className="form-input"
+                      type={showPassword ? "text" : "password"}
+                      dir="ltr"
+                      value={newUser.password}
+                      onChange={(e) =>
+                        setNewUser({ ...newUser, password: e.target.value })
+                      }
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className={styles.passwordToggleBtn}
+                      onClick={() => setShowPassword(!showPassword)}
+                      title={showPassword ? "إخفاء" : "إظهار"}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>تأكيد كلمة المرور *</label>
+                  <div className={styles.passwordInputWrapper}>
+                    <input
+                      className="form-input"
+                      type={showConfirmPassword ? "text" : "password"}
+                      dir="ltr"
+                      value={newUser.confirm}
+                      onChange={(e) =>
+                        setNewUser({ ...newUser, confirm: e.target.value })
+                      }
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className={styles.passwordToggleBtn}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      title={showConfirmPassword ? "إخفاء" : "إظهار"}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>المحل / الفرع</label>
+                  <input
+                    className="form-input"
+                    value={newUser.branch}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, branch: e.target.value })
+                    }
+                    maxLength={150}
+                    placeholder="مثال: الفرع الرئيسي"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>الصلاحية والرتبة *</label>
+                  <select
+                    className="form-input"
+                    value={newUser.role}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, role: e.target.value })
+                    }
+                  >
+                    {ROLE_OPTIONS.map((r) => (
+                      <option key={r.value} value={r.value}>
+                        {r.label}
+                      </option>
+                    ))}
                   </select>
-                </label>
-                {addUserError && <div style={{ color: "#dc2626", fontSize: "0.85rem" }}>{addUserError}</div>}
-                <div className={styles.deleteModalActions}>
-                  <button type="button" onClick={() => setIsAddUserOpen(false)} className={`btn-secondary ${styles.cancelModalBtn}`}>إلغاء</button>
-                  <button type="submit" disabled={savingNewUser} className="btn-primary">{savingNewUser ? "جاري الحفظ..." : "إنشاء الحساب"}</button>
+                </div>
+
+                {addUserError && (
+                  <div className={styles.errorBanner}>
+                    <AlertTriangle size={16} flexShrink={0} />
+                    <span>{addUserError}</span>
+                  </div>
+                )}
+
+                <div className={styles.modalActions}>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddUserOpen(false)}
+                    className="btn-secondary"
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingNewUser}
+                    className="btn-primary"
+                  >
+                    {savingNewUser ? (
+                      <>
+                        <RefreshCw size={16} className={styles.spin} />
+                        <span>جاري الحفظ...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus size={16} />
+                        <span>إنشاء الحساب</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </form>
             </div>
@@ -649,30 +1458,36 @@ export default function SettingsPage() {
         {userToDelete && (
           <div className="modal-overlay" onClick={() => setUserToDelete(null)}>
             <div
-              className={`modal-content ${styles.modalCard}`}
+              className={`modal-content ${styles.modalCard} ${styles.deleteModalCard}`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className={styles.deleteModalIcon}>
-                <Trash2 size={26} />
+                <Trash2 size={28} />
               </div>
 
               <h3 className={styles.deleteModalTitle}>
                 تأكيد حذف حساب المستخدم
               </h3>
               <p className={styles.deleteModalDesc}>
-                هل أنت متأكد من حذف الحساب <strong className={styles.deleteModalUserHighlight}>&quot;{userToDelete.displayName || userToDelete.email}&quot;</strong> من النظام؟
+                هل أنت متأكد من رغبتك في حذف الحساب{" "}
+                <strong className={styles.deleteModalUserHighlight}>
+                  &quot;{userToDelete.displayName || userToDelete.email}&quot;
+                </strong>{" "}
+                من النظام؟ هذا الإجراء نهائي ولا يمكن التراجع عنه.
               </p>
 
               <div className={styles.deleteModalActions}>
                 <button
+                  type="button"
                   onClick={() => setUserToDelete(null)}
-                  className={`btn-secondary ${styles.cancelModalBtn}`}
+                  className="btn-secondary"
                 >
                   إلغاء
                 </button>
                 <button
+                  type="button"
                   onClick={handleConfirmDelete}
-                  className={`btn-danger ${styles.confirmDeleteModalBtn}`}
+                  className="btn-danger"
                 >
                   نعم، احذف الحساب
                 </button>

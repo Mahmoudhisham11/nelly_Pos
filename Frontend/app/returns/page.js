@@ -287,20 +287,6 @@ export default function ReturnsPage() {
                   color="#db2777"
                   className={styles.searchFieldIcon}
                 />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setSearchResults(null);
-                      setSearchError("");
-                      setHasSearched(false);
-                    }}
-                    className={styles.clearSearchBtn}
-                  >
-                    <X size={16} />
-                  </button>
-                )}
               </div>
 
               <button

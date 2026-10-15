@@ -88,6 +88,27 @@ export default function ShopPage() {
   const [productToReturn, setProductToReturn] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [permissionDeniedAction, setPermissionDeniedAction] = useState(null);
+  const [activeShopCardIndex, setActiveShopCardIndex] = useState(0);
+  const shopSwiperRef = useRef(null);
+
+  const handleShopCardsScroll = () => {
+    if (!shopSwiperRef.current) return;
+    const el = shopSwiperRef.current;
+    const scrollLeft = Math.abs(el.scrollLeft);
+    const cardWidth = el.scrollWidth / 4;
+    const index = Math.round(scrollLeft / cardWidth);
+    setActiveShopCardIndex(Math.min(3, Math.max(0, index)));
+  };
+
+  const scrollToShopCard = (index) => {
+    if (!shopSwiperRef.current) return;
+    const el = shopSwiperRef.current;
+    const cards = el.children;
+    if (cards[index]) {
+      cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      setActiveShopCardIndex(index);
+    }
+  };
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -494,8 +515,12 @@ export default function ShopPage() {
               </div>
             </div>
 
-            {/* 4 Rich Stat Cards for Shop Summary Data */}
-            <div className={styles.statCardsGrid}>
+            {/* 4 Rich Stat Cards for Shop Summary Data (Mobile Swiper) */}
+            <div
+              className={styles.statCardsGrid}
+              ref={shopSwiperRef}
+              onScroll={handleShopCardsScroll}
+            >
               {/* Card 1: معروض */}
               <div className={styles.statCardRose}>
                 <div>
@@ -559,6 +584,20 @@ export default function ShopPage() {
                   <DollarSign size={20} />
                 </div>
               </div>
+            </div>
+
+            {/* Mobile Swiper Pagination Dots for Shop Cards */}
+            <div className={styles.shopSwiperDots}>
+              {[0, 1, 2, 3].map((idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => scrollToShopCard(idx)}
+                  className={`${styles.shopSwiperDot} ${
+                    activeShopCardIndex === idx ? styles.shopSwiperDotActive : ""
+                  }`}
+                />
+              ))}
             </div>
           </div>
 

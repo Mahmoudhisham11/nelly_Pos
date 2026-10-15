@@ -2,8 +2,28 @@
 
 import { useEffect, useState, useCallback, useSyncExternalStore } from "react";
 
-const card = { background: "var(--card-bg, rgba(255,255,255,0.04))", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 12, padding: 16, marginTop: 16 };
-const btn = { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(148,163,184,0.4)", background: "transparent", color: "inherit", cursor: "pointer", fontFamily: "inherit" };
+const card = {
+  background: "#ffffff",
+  border: "1px solid #ebdbe5",
+  borderRadius: 16,
+  padding: "18px 20px",
+  marginBottom: 20,
+  boxShadow: "0 2px 8px rgba(30, 19, 34, 0.04)",
+  boxSizing: "border-box",
+  width: "100%",
+};
+const btn = {
+  padding: "8px 16px",
+  borderRadius: 10,
+  border: "1px solid #fbcfe8",
+  background: "#fdf2f8",
+  color: "#db2777",
+  cursor: "pointer",
+  fontFamily: "inherit",
+  fontWeight: 700,
+  fontSize: "0.85rem",
+  transition: "all 0.2s ease",
+};
 
 /** Database backups: automatic daily copies + restore in the desktop app, one-click export in the web/PWA build. */
 export default function BackupCard() {

@@ -46,7 +46,9 @@ import {
   TrendingUp,
   DollarSign,
   Coins,
-  Users
+  Users,
+  X,
+  Package
 } from "lucide-react";
 import { searchProducts, findExactProduct } from "@/lib/productSearch";
 import styles from "./pos.module.css";
@@ -89,6 +91,7 @@ export default function POSPage() {
   const [toastMessage, setToastMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isCheckoutDrawerOpen, setIsCheckoutDrawerOpen] = useState(false);
 
   // Shift Invoices Table State & Filters
   const [showShiftInvoices, setShowShiftInvoices] = useState(false);
@@ -577,6 +580,7 @@ export default function POSPage() {
         setCompletedInvoice(inv);
         setIsReceiptModalOpen(true);
         clearCart();
+        setIsCheckoutDrawerOpen(false);
         const invNum = result.invoiceNumber || inv.invoiceNumber || inv.invoice_number || "";
         showToast(`تم إصدار الفاتورة رقم (${invNum}) بنجاح!`);
       }
@@ -817,6 +821,7 @@ export default function POSPage() {
         else if (isNewCustomerModalOpen) setIsNewCustomerModalOpen(false);
         else if (selectedInvoiceForDetails) setSelectedInvoiceForDetails(null);
         else if (itemToReturn) setItemToReturn(null);
+        else if (isCheckoutDrawerOpen) setIsCheckoutDrawerOpen(false);
         else setSearchDropdownOpen(false);
         return;
       }
@@ -838,11 +843,19 @@ export default function POSPage() {
         return;
       }
 
-      // F2 or Ctrl+Enter: Checkout
+      // F2 or Ctrl+Enter: Open Checkout Drawer or Submit if already open
       if (e.key === "F2" || (e.ctrlKey && e.key === "Enter")) {
         e.preventDefault();
-        if (!isSubmitting && cart.length > 0 && !isDiscountViolatingWholesale) {
-          handleCheckout();
+        if (cart.length === 0) {
+          showToast("سلة المشتريات فارغة!");
+          return;
+        }
+        if (!isCheckoutDrawerOpen) {
+          setIsCheckoutDrawerOpen(true);
+        } else {
+          if (!isSubmitting && !isDiscountViolatingWholesale) {
+            handleCheckout();
+          }
         }
       }
     };
@@ -1039,135 +1052,205 @@ export default function POSPage() {
                 </div>
               </div>
 
-              {/* 2-Column Full-Width Interior Grid on Large Screens */}
-              <div className={styles.registerGrid}>
-                {/* RIGHT COLUMN: Cart Items & Customer Info */}
-                <div className={styles.cartColumn}>
-                  {/* Cart Header */}
-                  <div className="pos-cart-top-bar">
-                    <div className={`pos-cart-title-text ${styles.cartTitleText}`}>
-                      <ShoppingCart size={20} color="var(--rose-600)" />
-                      <span>سلة البيع ({cart.reduce((a, c) => a + c.quantity, 0)} قطعة)</span>
-                    </div>
+              {/* Cart Top Bar (Full Width) */}
+              <div className="pos-cart-top-bar">
+                <div className={`pos-cart-title-text ${styles.cartTitleText}`}>
+                  <ShoppingCart size={22} color="var(--rose-600)" />
+                  <span>سلة البيع ({cart.reduce((a, c) => a + c.quantity, 0)} قطعة)</span>
+                </div>
 
-                    <div className="pos-cart-actions-group">
-                      {/* Held Invoices */}
-                      <button
-                        type="button"
-                        onClick={() => setIsHeldInvoicesModalOpen(true)}
-                        className={`btn-pos-held-invoices ${styles.heldInvoicesBtn}`}
-                        title="استعراض الفواتير المعلقة"
-                      >
-                        <FolderClock size={16} />
-                        <span>المعلقة</span>
-                        {heldInvoices.length > 0 && (
-                          <span className="pos-badge-held-counter">{heldInvoices.length}</span>
-                        )}
-                      </button>
+                <div className="pos-cart-actions-group">
+                  {/* Held Invoices */}
+                  <button
+                    type="button"
+                    onClick={() => setIsHeldInvoicesModalOpen(true)}
+                    className={`btn-pos-held-invoices ${styles.heldInvoicesBtn}`}
+                    title="استعراض الفواتير المعلقة"
+                  >
+                    <FolderClock size={16} />
+                    <span>المعلقة</span>
+                    {heldInvoices.length > 0 && (
+                      <span className="pos-badge-held-counter">{heldInvoices.length}</span>
+                    )}
+                  </button>
 
-                      {/* Hold Current Cart */}
-                      {cart.length > 0 && (
-                        <button
-                          onClick={handleHoldInvoice}
-                          className="btn-pos-hold-action"
-                          title="تعليق الفاتورة الحالية لخدمة زبون آخر"
-                        >
-                          <PauseCircle size={15} />
-                          <span>تعليق</span>
-                        </button>
-                      )}
+                  {/* Hold Current Cart */}
+                  {cart.length > 0 && (
+                    <button
+                      onClick={handleHoldInvoice}
+                      className="btn-pos-hold-action"
+                      title="تعليق الفاتورة الحالية لخدمة زبون آخر"
+                    >
+                      <PauseCircle size={15} />
+                      <span>تعليق</span>
+                    </button>
+                  )}
 
-                      {/* Clear Cart */}
-                      {cart.length > 0 && (
-                        <button
-                          onClick={clearCart}
-                          className="btn-pos-clear-action"
-                          title="تفريغ السلة"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  {/* Clear Cart */}
+                  {cart.length > 0 && (
+                    <button
+                      onClick={clearCart}
+                      className="btn-pos-clear-action"
+                      title="تفريغ السلة"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
 
-                  {/* Cart Items List */}
-                  <div className={`pos-cart-items-wrapper ${styles.cartItemsWrapper}`}>
-                    {cart.length === 0 ? (
-                      <div className={`pos-cart-empty-placeholder ${styles.cartEmptyPlaceholder}`}>
-                        <ShoppingCart size={38} color="var(--text-muted)" className={styles.cartEmptyIcon} />
-                        <p className={styles.cartEmptyTitle}>سلة البيع فارغة</p>
-                        <span>امسح باركود المنتج أو ابحث باسمه لإضافته فوراً</span>
-                      </div>
-                    ) : (
-                      <div className="pos-cart-items-list">
-                        {cart.map((item) => {
-                          const liveStock = shopProducts.find(p => p.id === (item.productId || item.id))?.quantity ?? item.stock ?? 0;
-                          const remainingStockAfterCart = Math.max(0, liveStock - item.quantity);
+              {/* Responsive Cards Grid for Cart Products (Concept 2) */}
+              {cart.length === 0 ? (
+                <div className={`pos-cart-empty-placeholder ${styles.cartEmptyPlaceholder}`} style={{ minHeight: "260px" }}>
+                  <ShoppingCart size={46} color="var(--text-muted)" className={styles.cartEmptyIcon} />
+                  <p className={styles.cartEmptyTitle} style={{ fontSize: "1.1rem", fontWeight: "800", marginTop: "8px" }}>
+                    سلة البيع فارغة حالياً
+                  </p>
+                  <span>امسح باركود المنتج أو ابحث باسمه في شريط البحث بالأعلى لإضافته فوراً</span>
+                </div>
+              ) : (
+                <div className={styles.cartCardsGrid}>
+                  {cart.map((item) => {
+                    const liveStock = shopProducts.find(p => p.id === (item.productId || item.id))?.quantity ?? item.stock ?? 0;
+                    const remainingStockAfterCart = Math.max(0, liveStock - item.quantity);
+                    const isLowStock = liveStock <= 3;
 
-                          return (
-                            <div key={item.id} className={`pos-cart-single-row ${styles.cartSingleRow}`}>
-                              <div className="pos-cart-item-details">
-                                <div className={styles.itemHeaderGroup}>
-                                  <span className={`pos-item-title ${styles.itemTitle}`}>{item.name}</span>
-                                  <span
-                                    className={liveStock <= 3 ? styles.stockPillLow : styles.stockPillNormal}
-                                    title="إجمالي الكمية المتوفرة بالمحل"
-                                  >
-                                    📦 رصيد المحل الكلي: <strong className="num-font" dir="ltr">{liveStock}</strong> قطعة
+                    return (
+                      <div key={item.id} className={styles.posItemCard}>
+                        <div>
+                          <div className={styles.cardTopRow}>
+                            <div className={styles.cardProductIconWrap}>
+                              <Sparkles size={16} />
+                            </div>
+                            <div className={styles.cardInfoWrap}>
+                              <div className={styles.cardProductName}>{item.name}</div>
+                              <div className={styles.cardBadgesRow}>
+                                {item.barcode && (
+                                  <span className={styles.cardBarcodePill}>
+                                    باركود: {item.barcode}
                                   </span>
-                                </div>
-                                <div className={`pos-item-subtext ${styles.itemSubtext}`}>
-                                  <span>
-                                    {formatNumber(item.sellingPrice)} ج.م × {item.quantity} = <strong className={styles.itemPriceTotal}>{formatNumber(item.sellingPrice * item.quantity)} ج.م</strong>
-                                  </span>
-                                  <span className={styles.remainingShopStock}>
-                                    (المتبقي بالمحل بعد السلة: <strong className="num-font" dir="ltr">{remainingStockAfterCart}</strong> قطعة)
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="pos-qty-button-group">
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(item.id, 1)}
-                                  className={`btn-pos-qty ${styles.qtyBtn}`}
-                                  title="زيادة الكمية"
+                                )}
+                                <span
+                                  className={isLowStock ? styles.stockPillLow : styles.stockPillNormal}
+                                  title="إجمالي الكمية المتوفرة بالمحل"
                                 >
-                                  <Plus size={15} />
-                                </button>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max={liveStock || item.stock}
-                                  value={item.quantity}
-                                  onChange={(e) => setDirectQuantity(item.id, e.target.value)}
-                                  className={styles.qtyDirectInput}
-                                  title="انقر لتعديل الكمية مباشرة بالأرقام"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(item.id, -1)}
-                                  className={`btn-pos-qty ${styles.qtyBtn}`}
-                                  title="إنقاص الكمية"
-                                >
-                                  <Minus size={15} />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => removeFromCart(item.id)}
-                                  className={`btn-pos-delete-item ${styles.deleteItemBtn}`}
-                                  title="حذف من السلة"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
+                                  📦 بالمحل: <strong className="num-font" dir="ltr">{liveStock}</strong>
+                                </span>
+                                <span className={styles.remainingShopStock} title="المتبقي بعد خصم كمية السلة">
+                                  بعد السلة: <strong className="num-font" dir="ltr">{remainingStockAfterCart}</strong>
+                                </span>
                               </div>
                             </div>
-                          );
-                        })}
+
+                            <button
+                              type="button"
+                              onClick={() => removeFromCart(item.id)}
+                              className={styles.cardBtnDelete}
+                              title="حذف الصنف من السلة"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className={styles.cardBottomRow}>
+                          <div className={styles.cardPriceBlock}>
+                            <span className={styles.cardUnitPrice}>
+                              {formatNumber(item.sellingPrice)} ج.م للقطعة
+                            </span>
+                            <div className={styles.cardTotalPrice}>
+                              {formatNumber(item.sellingPrice * item.quantity)} <small>ج.م</small>
+                            </div>
+                          </div>
+
+                          <div className={styles.cardStepperGroup}>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.id, 1)}
+                              className={styles.cardBtnStepper}
+                              title="زيادة الكمية"
+                            >
+                              <Plus size={13} />
+                            </button>
+                            <input
+                              type="number"
+                              min="1"
+                              max={liveStock || item.stock}
+                              value={item.quantity}
+                              onChange={(e) => setDirectQuantity(item.id, e.target.value)}
+                              className={styles.qtyDirectInput}
+                              title="تعديل الكمية مباشرة بالأرقام"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.id, -1)}
+                              className={styles.cardBtnStepper}
+                              title="إنقاص الكمية"
+                            >
+                              <Minus size={13} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Floating Bottom Checkout Trigger Bar (Concept 2) */}
+              {cart.length > 0 && (
+                <div
+                  className={styles.floatingCheckoutBar}
+                  onClick={() => setIsCheckoutDrawerOpen(true)}
+                  title="متابعة الدفع وإنهاء الفاتورة (F2)"
+                >
+                  <div className={styles.floatingCartSummary}>
+                    <span className={styles.floatingItemsCount}>
+                      {cart.reduce((a, c) => a + c.quantity, 0)} قطعة بالسلة
+                    </span>
+                    <div className={styles.floatingTotalAmount}>
+                      {formatNumber(cartFinalTotal)} <small>ج.م</small>
+                    </div>
                   </div>
 
+                  <button type="button" className={styles.floatingActionBtn}>
+                    <CreditCard size={18} />
+                    <span>متابعة الدفع [F2] ←</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Slide-Over Checkout Drawer Backdrop Overlay */}
+              <div
+                className={`${styles.drawerOverlay} ${isCheckoutDrawerOpen ? styles.drawerOverlayOpen : ""}`}
+                onClick={() => setIsCheckoutDrawerOpen(false)}
+              />
+
+              {/* Side-Over Checkout Drawer Panel */}
+              <aside
+                className={`${styles.sideDrawer} ${isCheckoutDrawerOpen ? styles.sideDrawerOpen : ""}`}
+                aria-label="لوحة الدفع والتحصيل"
+              >
+                <div className={styles.drawerHeader}>
+                  <div className={styles.drawerHeaderTitle}>
+                    <CreditCard size={20} color="var(--rose-600)" />
+                    <span>بيانات الدفع والتحصيل</span>
+                    <span className={styles.drawerBadge}>
+                      {cart.reduce((a, c) => a + c.quantity, 0)} قطعة
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.drawerCloseBtn}
+                    onClick={() => setIsCheckoutDrawerOpen(false)}
+                    title="إغلاق (Esc)"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className={styles.drawerBody}>
                   {/* Customer Selector Row */}
                   <div className="pos-control-row">
                     <div className="pos-label-between">
@@ -1178,6 +1261,7 @@ export default function POSPage() {
                       <button
                         onClick={() => setIsNewCustomerModalOpen(true)}
                         className="btn-pos-quick-add-customer"
+                        type="button"
                       >
                         <UserPlus size={14} />
                         <span>+ عميل جديد</span>
@@ -1228,10 +1312,7 @@ export default function POSPage() {
                       ))}
                     </select>
                   </div>
-                </div>
 
-                {/* LEFT COLUMN: Payment, Discount, Net Breakdown & Checkout */}
-                <div className={styles.paymentColumn}>
                   {/* Discount Row with Wholesale Barrier */}
                   <div className="pos-control-row">
                     <div className="pos-label-between">
@@ -1317,7 +1398,7 @@ export default function POSPage() {
                       className={`pos-input-general font-mono font-bold text-base ${styles.receivedInput}`}
                     />
 
-                    {/* Instant visual indicator for remaining / change right below input */}
+                    {/* Instant visual indicator for remaining / change */}
                     {cartFinalTotal > 0 && receivedCash !== "" && parsedReceivedCash > 0 && (
                       <div className={`pos-received-feedback ${changeForCustomer > 0 ? "change-mode" : remainingDue > 0 ? "debt-mode" : "exact-mode"}`}>
                         {changeForCustomer > 0 && (
@@ -1357,6 +1438,18 @@ export default function POSPage() {
                         )}
                       </div>
                     )}
+                  </div>
+
+                  {/* Order Notes Input */}
+                  <div className="pos-control-row">
+                    <span className="pos-label-title mb-1">ملاحظات الفاتورة:</span>
+                    <input
+                      type="text"
+                      placeholder="أي ملاحظات خاصة بالفاتورة..."
+                      value={orderNotes}
+                      onChange={(e) => setOrderNotes(e.target.value)}
+                      className={`pos-input-general ${styles.discountInput}`}
+                    />
                   </div>
 
                   {/* Net Bill Breakdown & Total */}
@@ -1418,12 +1511,12 @@ export default function POSPage() {
                     ) : (
                       <>
                         <CheckCircle2 size={22} />
-                        <span>إتمام عملية البيع وطباعة الفاتورة ({formatNumber(cartFinalTotal)} ج.م)</span>
+                        <span>إتمام عملية البيع وطباعة الفاتورة ({formatNumber(cartFinalTotal)} ج.م) [F2]</span>
                       </>
                     )}
                   </button>
                 </div>
-              </div>
+              </aside>
 
             </div>
           ) : (
