@@ -82,6 +82,11 @@ export async function updateShopProduct(id, updates) {
   if (updates.sellingPrice !== undefined || updates.price !== undefined || updates.retail_price !== undefined) {
     payload.sellingPrice = Number(updates.sellingPrice !== undefined ? updates.sellingPrice : (updates.price ?? updates.retail_price));
   }
+  if (payload.quantity !== undefined && updates.expectedQuantity !== undefined) {
+    // the quantity the edit screen showed: the server refuses the change if the stock moved since then
+    payload.expectedQuantity = Number(updates.expectedQuantity);
+  }
+  if (updates.reason !== undefined) payload.reason = updates.reason;
   if (updates.minThreshold !== undefined) payload.minThreshold = Number(updates.minThreshold);
   if (updates.description !== undefined) payload.description = updates.description;
 

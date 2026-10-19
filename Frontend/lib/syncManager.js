@@ -3,6 +3,8 @@ import {
   collection, 
   doc, 
   setDoc, 
+  getDocFromServer,
+  runTransaction,
   onSnapshot,
   increment,
   query,
@@ -32,7 +34,23 @@ const COLLECTIONS = [
   { name: "nelly_treasury_transactions", table: "treasury_transactions" },
   { name: "nelly_transfers", table: "transfers" },
   { name: "nelly_users", table: "users" },
+  { name: "nelly_stock_movements", table: "stock_movements" },
 ];
+
+// Collections whose numbers (stock, balances) are synced as increments: see Backend/src/db/sql.ts DELTA_FIELDS.
+const COUNTER_COLLECTIONS = new Set(["nelly_shop_products", "nelly_products", "nelly_customers", "nelly_suppliers"]);
+
+// Applied increments are recorded here (one tiny doc per change) so a change sent twice is only counted once.
+const APPLIED_OPS = "_appliedOps";
+
+// A cloud document as the /sync/apply-batch item the listeners also produce.
+function toApplyItem(colName, docSnap) {
+  if (!docSnap.exists()) return null;
+  const data = docSnap.data() || {};
+  if (data._deleted) return { collectionName: colName, docId: docSnap.id, action: "DELETE" };
+  const { _syncedAt, _deleted, ...fields } = data;
+  return { collectionName: colName, docId: docSnap.id, action: "SET", data: { id: docSnap.id, ...fields } };
+}
 
 // The server applies each cloud document independently and reports the ones it could not store.
 function reportApplyResult(res) {
@@ -276,6 +294,11 @@ class SyncManager {
       this.notify();
 
       const syncedIds = [];
+      // A document whose earlier change failed gets none of its later changes this round: they must reach the cloud
+      // in order (e.g. an increment pushed before the product's creation would be overwritten by it).
+      const blockedDocs = new Set();
+      // Counter documents this device changed: re-read from the cloud afterwards (see refreshCounters).
+      const counterDocs = new Map();
 
       for (const item of queue) {
         const colName = item.collectionName;
@@ -285,6 +308,9 @@ class SyncManager {
         if (typeof payload === "string") {
           try { payload = JSON.parse(payload); } catch (_) {}
         }
+
+        const docKey = `${colName}/${docId}`;
+        if (blockedDocs.has(docKey)) continue;
 
         try {
           const docRef = doc(firestoreDb, "shops", this.shopId, colName, docId);
@@ -298,11 +324,19 @@ class SyncManager {
             delete cleanPayload.id;
             // Counters (stock, balances) go up as increments so concurrent devices add up instead of overwriting.
             const deltas = cleanPayload.__deltas;
+            const opId = cleanPayload.__opId || `q-${item.recordId}-${item.id}-${item.createdAt}`;
             delete cleanPayload.__deltas;
+            delete cleanPayload.__opId;
+            let hasIncrement = false;
             if (deltas && action !== "INSERT") {
+              // a counter missing from __deltas was SET on purpose (a stock-take) and goes up as its value
               for (const [field, change] of Object.entries(deltas)) {
-                if (change) cleanPayload[field] = increment(Number(change));
-                else delete cleanPayload[field]; // unchanged here: never overwrite another device's newer value
+                if (change) {
+                  cleanPayload[field] = increment(Number(change));
+                  hasIncrement = true;
+                } else {
+                  delete cleanPayload[field]; // unchanged here: never overwrite another device's newer value
+                }
               }
             }
 
@@ -310,21 +344,38 @@ class SyncManager {
               if (cleanPayload[k] === undefined) delete cleanPayload[k];
             });
 
-            await setDoc(docRef, {
+            const docData = {
               ...cleanPayload,
               updatedAt: cleanPayload.updatedAt || new Date().toISOString(),
               _deleted: false,
               _syncedAt: serverTimestamp(),
-            }, { merge: true });
+            };
+            if (hasIncrement) {
+              // The increment and its receipt are written together, and only if the receipt is not there yet: if the
+              // app closes (or mark-synced fails) after the cloud took the change, re-sending it changes nothing.
+              const opRef = doc(firestoreDb, "shops", this.shopId, APPLIED_OPS, opId);
+              await runTransaction(firestoreDb, async (tx) => {
+                const done = await tx.get(opRef);
+                if (done.exists()) return;
+                tx.set(docRef, docData, { merge: true });
+                tx.set(opRef, { doc: docKey, at: serverTimestamp() });
+              });
+            } else {
+              await setDoc(docRef, docData, { merge: true });
+            }
           }
+          if (COUNTER_COLLECTIONS.has(colName)) counterDocs.set(docKey, { colName, docId });
 
           // Marked right away (not after the loop): an increment must never be sent twice if the app closes mid-push.
           await api.post("/sync/queue/mark-synced", { shopId: this.shopId, ids: [item.id] });
           syncedIds.push(item.id);
         } catch (pushErr) {
+          blockedDocs.add(docKey);
           console.error(`Failed to push item ${item.id} (${colName}/${docId}):`, pushErr);
         }
       }
+
+      await this.refreshCounters([...counterDocs.values()]);
 
       this.pendingCount = Math.max(0, queue.length - syncedIds.length);
       this.lastSyncedAt = new Date().toISOString();
@@ -334,6 +385,32 @@ class SyncManager {
       this.isSyncing = false;
       this.notify();
     }
+  }
+
+  /**
+   * After this device pushed its changes to stock / balances, read those documents back from the server and store them
+   * locally. Cloud changes from other devices that arrived while this device still had unsent changes for the same
+   * document were skipped (local changes win until pushed), and nothing guarantees the listener sends them again, so
+   * without this the device could keep showing an old number. Rows that got new local changes meanwhile are skipped by
+   * the server again and refreshed after their own push.
+   */
+  async refreshCounters(docs) {
+    if (!docs.length || !this.shopId) return;
+    const shopId = this.shopId;
+    const items = [];
+    for (const { colName, docId } of docs) {
+      try {
+        const snap = await getDocFromServer(doc(firestoreDb, "shops", shopId, colName, docId));
+        const item = toApplyItem(colName, snap);
+        if (item) items.push(item);
+      } catch (err) {
+        console.warn(`Sync: could not re-read ${colName}/${docId}`, err?.message || err);
+      }
+    }
+    if (!items.length || this.shopId !== shopId) return;
+    await api.post("/sync/apply-batch", { shopId, items }).then(reportApplyResult).catch((e) => {
+      console.warn("Sync: refresh apply failed", e?.message || e);
+    });
   }
 }
 

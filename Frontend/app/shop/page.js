@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import ProductModal, { CATEGORIES } from "@/components/ProductModal";
 import { searchProducts } from "@/lib/productSearch";
 import BarcodeModal from "@/components/BarcodeModal";
+import StockMovementsModal from "@/components/StockMovementsModal";
 import PrintInventoryModal from "@/components/PrintInventoryModal";
 import TransferModal from "@/components/TransferModal";
 import PermissionDeniedModal from "@/components/PermissionDeniedModal";
@@ -35,6 +36,7 @@ import {
   Printer,
   Trash2,
   Edit3,
+  History,
   Barcode,
   RotateCcw,
   ShoppingBag,
@@ -84,6 +86,7 @@ export default function ShopPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [barcodeProduct, setBarcodeProduct] = useState(null);
+  const [historyProduct, setHistoryProduct] = useState(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [productToReturn, setProductToReturn] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -244,8 +247,12 @@ export default function ShopPage() {
       await updateShopProduct(id, productData);
       showToast("تم تحديث بيانات الصنف بالمحل بنجاح.");
     } else {
-      await addShopProduct(productData);
-      showToast("تمت إضافة الصنف الجديد بالمحل بنجاح.");
+      const saved = await addShopProduct(productData);
+      if (saved?.restocked) {
+        showToast(`الباركود ده موجود لصنف "${saved.name}": اتضافت الكمية عليه وبقى رصيده ${saved.quantity}.`);
+      } else {
+        showToast("تمت إضافة الصنف الجديد بالمحل بنجاح.");
+      }
     }
   };
 
@@ -723,6 +730,14 @@ export default function ShopPage() {
                               <Barcode size={15} color="#db2777" />
                             </button>
 
+                            <button
+                              onClick={() => setHistoryProduct(p)}
+                              className={`btn-secondary ${styles.barcodeBtn}`}
+                              title="سجل حركة الصنف (بيع، مرتجع، توريد، تحويل، جرد)"
+                            >
+                              <History size={15} color="#9333ea" />
+                            </button>
+
                             {/* Edit */}
                             <button
                               onClick={() => handleOpenEditModal(p)}
@@ -796,6 +811,13 @@ export default function ShopPage() {
         products={products}
         title="كشف جرد بضاعة المحل"
         locationName="محل Nelly"
+      />
+
+      <StockMovementsModal
+        isOpen={!!historyProduct}
+        onClose={() => setHistoryProduct(null)}
+        product={historyProduct && (products.find((x) => x.id === historyProduct.id) || historyProduct)}
+        location="shop"
       />
 
       {/* Barcode Print Modal */}
