@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
-    "@devora/pos-core": "*",
+    "@devora/pos-core": "github:Mahmoudhisham11/pos-core#v0.2.0",
     "@sqlite.org/sqlite-wasm": "^3.53.4-build2",
     "canvas-confetti": "^1.9.4",
     "electron-updater": "^6.8.9",

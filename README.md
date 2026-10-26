@@ -1,13 +1,18 @@
 # Nelly_project
 
-نسخة موحّدة من نظام Nelly: **واجهة واحدة** (نفس واجهة nelly_desktop الأصلية) و**Backend واحد** (TypeScript).
+واجهة نظام Nelly (Next.js + غلاف Electron) في `Frontend/`.
 
-```
-Frontend/   الواجهة الأصلية (Next.js) + غلاف Electron
-Backend/    الـ Backend (@devora/pos-core): باك إند POS عام مش مربوط ببراند، مكتوب بـ TypeScript
+الـ Backend مش جوه الريبو دي: هو مكتبة عامة لأي نظام كاشير في ريبو لوحدها،
+[`Mahmoudhisham11/pos-core`](https://github.com/Mahmoudhisham11/pos-core) (`@devora/pos-core`)، والمشروع بيثبّتها على نسخة معيّنة
+في `Frontend/package.json`:
+
+```json
+"@devora/pos-core": "github:Mahmoudhisham11/pos-core#v0.2.0"
 ```
 
-الباك إند بقى عام لأي نظام كاشير: كل واجهة بتبعتله إعداداتها (أسماء collections في Firestore، البراند الافتراضي...)، وإعدادات Nelly موجودة في `Frontend/core.config.json`. وفيه كمان نظام **المقاسات والألوان (Variants)**. التفاصيل وطريقة ربط واجهة جديدة في [`docs/BACKEND_CORE.md`](docs/BACKEND_CORE.md).
+- إعدادات Nelly للـ Backend (أسماء collections في Firestore، البراند، العملة، طرق الدفع...) موجودة في `Frontend/core.config.json`.
+- تحديث الـ Backend: غيّر رقم الـ tag في `Frontend/package.json` واعمل `npm install` من فولدر المشروع.
+- تعديل الـ Backend وتجربته مع Nelly في نفس الوقت: `npm link` (التفاصيل في README بتاع pos-core).
 
 ## التطوير
 للتطوير: `npm run dev`. نسخة سطح المكتب (Electron): `npm run desktop`. يحتاج Node.js 22.13 أو أحدث.

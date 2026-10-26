@@ -2,16 +2,13 @@
   "name": "nelly-project",
   "private": true,
   "workspaces": [
-    "Backend",
     "Frontend"
   ],
   "scripts": {
     "dev": "npm run dev -w Frontend",
     "build": "npm run build -w Frontend",
-    "typecheck": "npm run typecheck -w Backend",
     "lint": "npm run lint -w Frontend",
     "desktop": "npm run desktop -w Frontend",
-    "start": "npm run start -w Frontend",
-    "test": "npm test -w Backend"
+    "start": "npm run start -w Frontend"
   }
 }

@@ -1,4 +1,4 @@
-// Bundles Backend/ (TypeScript) into one CommonJS file Electron's main process can require. better-sqlite3 stays external.
+// Bundles @devora/pos-core (TypeScript) into one CommonJS file Electron's main process can require. better-sqlite3 stays external.
 import { build } from "esbuild";
 
 await build({

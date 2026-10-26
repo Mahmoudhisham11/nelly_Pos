@@ -18,7 +18,7 @@ process.on("uncaughtException", (err) => console.error("[Electron Uncaught Excep
 process.on("unhandledRejection", (reason) => console.error("[Electron Unhandled Rejection]", reason));
 
 /*
- * The Nelly backend (bundled from Backend/ by scripts/build-electron-backend.mjs) on real SQLite files in the profile.
+ * The Nelly backend (@devora/pos-core, bundled by scripts/build-electron-backend.mjs) on real SQLite files in the profile.
  * ONE database per shop: <userData>/shops/<shopId>/nelly.db. A database belongs to exactly one shop (app_meta.shopId),
  * so logging in with another shop's account opens that shop's own database and never shows the previous shop's data.
  * <userData>/data/nelly.db is the database of the single-shop versions (and of a device that has no cloud login yet);
