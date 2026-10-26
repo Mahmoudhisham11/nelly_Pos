@@ -1,11 +1,12 @@
-// /api/rpc — browser bridge to the Nelly backend (@nelly/core) running on the Next.js server with a real SQLite file.
+// /api/rpc — browser bridge to the POS backend (@devora/pos-core) running on the Next.js server with a real SQLite file.
 // Used by `npm run dev` / `npm start` on a customer's machine. It is switched off on Vercel (no customer data there)
 // unless NELLY_RPC=on. The desktop build does not include this route (see scripts/build-desktop.mjs).
 import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
-import { createBackend, configure } from "@nelly/core";
-import { openBetterSqlite } from "@nelly/core/src/db/betterSqlite";
+import { createBackend, configure } from "@devora/pos-core";
+import { openBetterSqlite } from "@devora/pos-core/node";
+import coreConfig from "../../../core.config.json";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ function backend() {
         fs.writeFileSync(keyFile, secret, { mode: 0o600 });
       }
     }
-    configure({ SECRET_KEY: secret });
+    configure({ ...coreConfig, SECRET_KEY: secret }); // Nelly's branding for the brand-neutral core
     g.__nellyBackend = createBackend(openBetterSqlite(file));
     g.__nellyBackend.startScheduler(); // auto-close of stale shifts (also catches up at start-up)
   }

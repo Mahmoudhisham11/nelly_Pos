@@ -1,6 +1,6 @@
 // Builds the Windows installer (Setup.exe) from a clean staging folder that holds ONLY what the installed app runs:
 // the bundled main process, preload, backend bundle, native SQLite and the static UI. (Packaging the workspace
-// itself would drag in every web dependency and trips over the @nelly/core workspace link.)
+// itself would drag in every web dependency and trips over the @devora/pos-core workspace link.)
 //   node scripts/package-desktop.mjs            -> release/  (local test build)
 //   node scripts/package-desktop.mjs --publish  -> also uploads the release to GitHub (needs GH_TOKEN), for auto-update
 import fs from "node:fs";

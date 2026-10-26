@@ -18,14 +18,16 @@ const dump = parsed.collections ? parsed : {
 };
 const out = path.resolve(outArg);
 
-// Bundle the bits of @nelly/core we need into a temp CommonJS module.
+// Bundle the bits of @devora/pos-core we need into a temp CommonJS module.
 const tmp = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "nelly-core-")), "core.cjs");
 await build({
-  stdin: { contents: `export { runMigrations } from "@nelly/core"; export { applyItems } from "@nelly/core/src/api/sync";`, resolveDir: process.cwd() },
+  stdin: { contents: `export { runMigrations, configure, applyItems } from "@devora/pos-core";`, resolveDir: process.cwd() },
   bundle: true, platform: "node", target: "node22", format: "cjs", outfile: tmp, logLevel: "error",
   external: ["better-sqlite3"],
 });
-const { runMigrations, applyItems } = createRequire(import.meta.url)(tmp);
+const { runMigrations, configure, applyItems } = createRequire(import.meta.url)(tmp);
+// the dump holds Nelly's collections (nelly_*): use Nelly's settings so applyItems recognises them
+configure(JSON.parse(fs.readFileSync(new URL("../core.config.json", import.meta.url), "utf8")));
 
 for (const f of [out, out + "-wal", out + "-shm"]) fs.rmSync(f, { force: true });
 fs.mkdirSync(path.dirname(out), { recursive: true });

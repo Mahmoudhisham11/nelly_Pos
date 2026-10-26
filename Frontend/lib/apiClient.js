@@ -1,6 +1,6 @@
 // apiClient.js — Local API client for Nelly.
 // Same contract as the original HTTP client (api.get/post/put/patch/delete, unwrap, subscribe...), but requests no
-// longer go to a separate FastAPI process: they are handed to the in-process Nelly backend (@nelly/core) through
+// longer go to a separate FastAPI process: they are handed to the in-process POS backend (@devora/pos-core) through
 // lib/transport.js (Electron IPC on the desktop app, the /api/rpc bridge in the browser).
 import { send } from "./transport";
 const TOKEN_KEY = "nelly_desktop_auth_token";

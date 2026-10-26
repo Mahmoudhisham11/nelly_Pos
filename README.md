@@ -4,8 +4,10 @@
 
 ```
 Frontend/   الواجهة الأصلية (Next.js) + غلاف Electron
-Backend/    الـ Backend (@nelly/core): نفس endpoints ونفس شكل الردود ونفس قاعدة SQLite القديمة، مكتوب بـ TypeScript
+Backend/    الـ Backend (@devora/pos-core): باك إند POS عام مش مربوط ببراند، مكتوب بـ TypeScript
 ```
+
+الباك إند بقى عام لأي نظام كاشير: كل واجهة بتبعتله إعداداتها (أسماء collections في Firestore، البراند الافتراضي...)، وإعدادات Nelly موجودة في `Frontend/core.config.json`. وفيه كمان نظام **المقاسات والألوان (Variants)**. التفاصيل وطريقة ربط واجهة جديدة في [`docs/BACKEND_CORE.md`](docs/BACKEND_CORE.md).
 
 ## التطوير
 للتطوير: `npm run dev`. نسخة سطح المكتب (Electron): `npm run desktop`. يحتاج Node.js 22.13 أو أحدث.

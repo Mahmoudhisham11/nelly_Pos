@@ -3,7 +3,7 @@ import { build } from "esbuild";
 
 await build({
   stdin: {
-    contents: `export { createBackend, configure, settings } from "@nelly/core"; export { openBetterSqlite } from "@nelly/core/src/db/betterSqlite";`,
+    contents: `export { createBackend, configure, settings } from "@devora/pos-core"; export { openBetterSqlite } from "@devora/pos-core/node";`,
     resolveDir: process.cwd(),
   },
   bundle: true,

@@ -12,7 +12,7 @@ const nextConfig = {
   reactCompiler: true,
   turbopack: {},
   images: { unoptimized: true },
-  transpilePackages: ["@nelly/core"],
+  transpilePackages: ["@devora/pos-core"],
   serverExternalPackages: ["better-sqlite3", "firebase-admin"],
 };
 

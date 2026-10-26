@@ -1,0 +1,46 @@
+{
+  "APP_NAME": "Nelly POS",
+  "COLLECTION_PREFIX": "nelly_",
+  "DEFAULT_BRAND": "Nelly",
+  "DEFAULT_CATEGORY": "أخرى",
+  "BRANCH_NAME": "مخزن ومحل Nelly الرئيسي",
+  "SHOP_LOCATION_NAME": "معرض ومحل Nelly",
+  "WAREHOUSE_LOCATION_NAME": "المخزن الرئيسي",
+  "CURRENCY": "EGP",
+  "CURRENCY_SYMBOL": "ج.م",
+  "PAYMENT_METHODS": [
+    {
+      "name": "نقدي",
+      "channel": "cash",
+      "aliases": [
+        "كاش",
+        "cash"
+      ]
+    },
+    {
+      "name": "فيزا",
+      "channel": "visa",
+      "aliases": [
+        "visa",
+        "بطاقة",
+        "بطاقة بنكية",
+        "card"
+      ],
+      "matchPrefix": true
+    },
+    {
+      "name": "تحويل",
+      "channel": "wallets"
+    },
+    {
+      "name": "آجل",
+      "channel": "cash",
+      "credit": true,
+      "aliases": [
+        "اجل"
+      ]
+    }
+  ],
+  "DEFAULT_CUSTOMER_NAME": "عميل نقدي",
+  "DEFAULT_CUSTOMER_TYPE": "قطاعي"
+}

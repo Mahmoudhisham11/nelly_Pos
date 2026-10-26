@@ -1,4 +1,4 @@
-// transport.js — hands an API request to the Nelly backend (@nelly/core) and returns { status, body }.
+// transport.js — hands an API request to the POS backend (@devora/pos-core) and returns { status, body }.
 //
 //  1. Electron desktop app: the backend runs in the main process on a real SQLite file (window.nellyDesktop.request).
 //  2. Browser PWA build (NEXT_PUBLIC_NELLY_BACKEND=browser): backend in a Web Worker on SQLite WASM + OPFS.

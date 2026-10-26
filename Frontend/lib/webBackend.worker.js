@@ -1,9 +1,10 @@
-// Web Worker: runs the Nelly backend (@nelly/core) on SQLite WASM persisted in the browser's private file system (OPFS).
+// Web Worker: runs the POS backend (@devora/pos-core) on SQLite WASM persisted in the browser's private file system (OPFS).
 // The page talks to it through lib/webBackendClient.js. Only one tab may own the database at a time (Web Lock).
 // One database per shop ("/shop-<shopId>.db"), like the desktop app: an account of another shop opens its own,
 // separate database. "/nelly.db" is the database of the single-shop versions; the first cloud account that is a user
 // inside it takes it over.
-import { createBackend, configure, wrapWasmSqlite } from "@nelly/core";
+import { createBackend, configure, wrapWasmSqlite } from "@devora/pos-core";
+import coreConfig from "../core.config.json";
 
 const LEGACY = "/nelly.db";
 const fileOf = (shopId) => `/shop-${shopId}.db`;
@@ -46,6 +47,7 @@ function openDb(file) {
 }
 
 async function boot({ secret, lastShop, projectId }) {
+  configure(coreConfig); // Nelly's branding for the brand-neutral core (collection names, default brand...)
   if (secret) configure({ SECRET_KEY: secret });
   if (projectId) configure({ FIREBASE_PROJECT_ID: projectId });
   // The library is served as static files from /sqlite (see scripts/copy-wasm.mjs) instead of being bundled.

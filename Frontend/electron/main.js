@@ -94,7 +94,8 @@ function autoBackup() {
 function startBackend() {
   const { configure } = core();
   fs.mkdirSync(app.getPath("userData"), { recursive: true });
-  configure({ SECRET_KEY: loadSecret(), FIREBASE_PROJECT_ID: firebaseProjectFromEnv() });
+  // Nelly's branding for the brand-neutral core (collection names, default brand...): see core.config.json
+  configure({ ...require("../core.config.json"), SECRET_KEY: loadSecret(), FIREBASE_PROJECT_ID: firebaseProjectFromEnv() });
   const reg = readRegistry();
   const last = validShopId(reg.lastShop) && fs.existsSync(path.join(shopDir(reg.lastShop), "nelly.db")) ? shopDir(reg.lastShop) : LEGACY_DIR();
   openDb(last);

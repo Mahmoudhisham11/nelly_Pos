@@ -11,6 +11,7 @@
     "typecheck": "npm run typecheck -w Backend",
     "lint": "npm run lint -w Frontend",
     "desktop": "npm run desktop -w Frontend",
-    "start": "npm run start -w Frontend"
+    "start": "npm run start -w Frontend",
+    "test": "npm test -w Backend"
   }
 }

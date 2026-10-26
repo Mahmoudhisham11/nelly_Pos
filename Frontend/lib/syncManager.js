@@ -16,29 +16,22 @@ import { db as firestoreDb } from "./firebase";
 import { cloudSession } from "./cloudSession";
 import { api } from "./apiClient";
 
-const COLLECTIONS = [
-  { name: "nelly_shop_products", table: "shop_products" },
-  { name: "nelly_products", table: "products" },
-  { name: "nelly_sales", table: "sales" },
-  { name: "nelly_reports", table: "shift_reports" },
-  { name: "nelly_returns", table: "sales_returns" },
-  { name: "nelly_customers", table: "customers" },
-  { name: "nelly_suppliers", table: "suppliers" },
-  { name: "nelly_shop_purchases", table: "shop_purchases" },
-  { name: "nelly_shop_purchase_returns", table: "shop_purchase_returns" },
-  { name: "nelly_employees", table: "employees" },
-  { name: "nelly_employee_attendance", table: "employee_attendance" },
-  { name: "nelly_employee_transactions", table: "employee_transactions" },
-  { name: "nelly_expense_items", table: "expense_items" },
-  { name: "nelly_monthly_expenses", table: "monthly_expenses" },
-  { name: "nelly_treasury_transactions", table: "treasury_transactions" },
-  { name: "nelly_transfers", table: "transfers" },
-  { name: "nelly_users", table: "users" },
-  { name: "nelly_stock_movements", table: "stock_movements" },
-];
-
-// Collections whose numbers (stock, balances) are synced as increments: see Backend/src/db/sql.ts DELTA_FIELDS.
-const COUNTER_COLLECTIONS = new Set(["nelly_shop_products", "nelly_products", "nelly_customers", "nelly_suppliers"]);
+// The cloud collections to sync, with the local table behind each one and whether its numbers (stock, balances) move
+// as increments. They come from the backend (GET /app-info, built from its COLLECTION_PREFIX), so this file never
+// names a collection itself.
+let collectionsCache = null;
+async function syncCollections() {
+  if (!collectionsCache) {
+    const info = await api.get("/app-info");
+    const list = Array.isArray(info?.collections) ? info.collections : [];
+    if (!list.length) throw new Error("app-info returned no sync collections");
+    collectionsCache = {
+      list,
+      counters: new Set(list.filter((c) => c.counter).map((c) => c.name)),
+    };
+  }
+  return collectionsCache;
+}
 
 // Applied increments are recorded here (one tiny doc per change) so a change sent twice is only counted once.
 const APPLIED_OPS = "_appliedOps";
@@ -181,7 +174,8 @@ class SyncManager {
     this.unsubscribes.forEach((u) => { try { u(); } catch (_) {} });
     this.unsubscribes = [];
     await this.startRealtimeListeners({ full: true });
-    await new Promise((r) => setTimeout(r, COLLECTIONS.length * 150 + 2000)); // listeners start staggered
+    const { list } = await syncCollections();
+    await new Promise((r) => setTimeout(r, list.length * 150 + 2000)); // listeners start staggered
     this.lastSyncedAt = new Date().toISOString();
     this.notify();
   }
@@ -200,10 +194,17 @@ class SyncManager {
       const res = await api.get(`/sync/cursors?shopId=${encodeURIComponent(shopId)}`).catch(() => null);
       if (res && typeof res === "object" && !Array.isArray(res)) cursors = res;
     }
+    let collections;
+    try {
+      collections = (await syncCollections()).list;
+    } catch (e) {
+      console.warn("Sync: could not read the collection list", e?.message || e);
+      return;
+    }
     if (this.shopId !== shopId || !this.isInitialized) return;
 
     const MARGIN_MS = 10 * 60 * 1000;
-    COLLECTIONS.forEach(({ name: colName }, idx) => {
+    collections.forEach(({ name: colName }, idx) => {
       setTimeout(() => {
         if (!this.isInitialized || this.shopId !== shopId) return;
         try {
@@ -293,6 +294,7 @@ class SyncManager {
       this.pendingCount = queue.length;
       this.notify();
 
+      const { counters } = await syncCollections();
       const syncedIds = [];
       // A document whose earlier change failed gets none of its later changes this round: they must reach the cloud
       // in order (e.g. an increment pushed before the product's creation would be overwritten by it).
@@ -364,7 +366,7 @@ class SyncManager {
               await setDoc(docRef, docData, { merge: true });
             }
           }
-          if (COUNTER_COLLECTIONS.has(colName)) counterDocs.set(docKey, { colName, docId });
+          if (counters.has(colName)) counterDocs.set(docKey, { colName, docId });
 
           // Marked right away (not after the loop): an increment must never be sent twice if the app closes mid-push.
           await api.post("/sync/queue/mark-synced", { shopId: this.shopId, ids: [item.id] });
