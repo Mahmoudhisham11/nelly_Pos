@@ -145,6 +145,18 @@ export default function ProductModal({
         description: formData.description ? formData.description.trim() : ""
       };
 
+      if (productToEdit) {
+        // Only a quantity the user actually changed is sent: re-sending the number shown when this screen was opened
+        // would undo every sale made meanwhile. The server refuses the change if the stock moved since then.
+        const shownQty = Number(productToEdit.quantity ?? 0);
+        if (dataToSave.quantity === shownQty) {
+          delete dataToSave.quantity;
+        } else {
+          dataToSave.expectedQuantity = shownQty;
+          dataToSave.reason = "تعديل الكمية (جرد) من شاشة الصنف";
+        }
+      }
+
       if (!shouldHideThreshold) {
         dataToSave.minThreshold = parseInt(formData.minThreshold, 10) || 5;
       } else if (productToEdit?.minThreshold !== undefined) {
@@ -307,6 +319,9 @@ export default function ProductModal({
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                 />
                 {errors.quantity && <span className={styles.fieldError}>{errors.quantity}</span>}
+                {productToEdit && (
+                  <span className={styles.fieldHint}>تغيير الكمية هنا بيتسجل كجرد في سجل حركة الصنف.</span>
+                )}
               </div>
 
               <div className={`form-group ${styles.formGroupNoMargin}`}>

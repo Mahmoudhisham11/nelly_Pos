@@ -7,6 +7,7 @@ import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import ProductModal, { CATEGORIES } from "@/components/ProductModal";
 import BarcodeModal from "@/components/BarcodeModal";
+import StockMovementsModal from "@/components/StockMovementsModal";
 import PrintInventoryModal from "@/components/PrintInventoryModal";
 import PermissionDeniedModal from "@/components/PermissionDeniedModal";
 import TransferModal from "@/components/TransferModal";
@@ -25,6 +26,7 @@ import {
   Download, 
   Trash2, 
   Edit3, 
+  History,
   Barcode, 
   Boxes, 
   PackagePlus,
@@ -51,6 +53,7 @@ export default function ProductsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [barcodeProduct, setBarcodeProduct] = useState(null);
+  const [historyProduct, setHistoryProduct] = useState(null);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [productToTransfer, setProductToTransfer] = useState(null);
@@ -579,6 +582,14 @@ export default function ProductsPage() {
                               <Barcode size={15} color="#db2777" />
                               باركود
                             </button>
+                            <button
+                              onClick={() => setHistoryProduct(p)}
+                              className={`btn-secondary ${styles.barcodeBtn}`}
+                              title="سجل حركة الصنف (بيع، مرتجع، توريد، تحويل، جرد)"
+                            >
+                              <History size={15} color="#9333ea" />
+                            </button>
+
                             <button 
                               onClick={() => handleOpenEditModal(p)}
                               className={`btn-primary ${styles.editBtn}`}
@@ -629,6 +640,13 @@ export default function ProductsPage() {
           onSave={handleSaveProduct}
           productToEdit={editingProduct}
           hideSellingPrice={true}
+        />
+
+        <StockMovementsModal
+          isOpen={!!historyProduct}
+          onClose={() => setHistoryProduct(null)}
+          product={historyProduct && (products.find((x) => x.id === historyProduct.id) || historyProduct)}
+          location="warehouse"
         />
 
         <BarcodeModal 
