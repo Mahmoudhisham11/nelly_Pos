@@ -1221,10 +1221,12 @@ export default function POSPage() {
               )}
 
               {/* Slide-Over Checkout Drawer Backdrop Overlay */}
-              <div
-                className={`${styles.drawerOverlay} ${isCheckoutDrawerOpen ? styles.drawerOverlayOpen : ""}`}
-                onClick={() => setIsCheckoutDrawerOpen(false)}
-              />
+              {isCheckoutDrawerOpen && (
+                <div
+                  className={`${styles.drawerOverlay} ${styles.drawerOverlayOpen}`}
+                  onClick={() => setIsCheckoutDrawerOpen(false)}
+                />
+              )}
 
               {/* Side-Over Checkout Drawer Panel */}
               <aside

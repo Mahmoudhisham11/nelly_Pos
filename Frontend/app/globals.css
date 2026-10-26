@@ -980,10 +980,10 @@ td.num-font, th.num-font {
   div[class*="modal-overlay"],
   div[class*="modalBackdrop"],
   div[class*="modal-backdrop"],
-  div[class*="overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
-  div[class*="Overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
-  div[class*="backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop),
-  div[class*="Backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop) {
+  div[class*="overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop):not([class*="drawer"]):not([class*="Drawer"]),
+  div[class*="Overlay"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop):not([class*="drawer"]):not([class*="Drawer"]),
+  div[class*="backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop):not([class*="drawer"]):not([class*="Drawer"]),
+  div[class*="Backdrop"]:not([class*="sidebar"]):not(.sidebar-mobile-backdrop):not([class*="drawer"]):not([class*="Drawer"]) {
     position: fixed !important;
     inset: 0 !important;
     top: 0 !important;
